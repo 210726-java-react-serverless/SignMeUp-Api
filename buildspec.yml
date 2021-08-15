@@ -17,4 +17,4 @@ phases:
       - echo build completed on `date`
 artifacts:
   files:
-    - target/registrar-1.0.SNAPSHOT.war
+    - registrar/target/registrar-1.0.SNAPSHOT.war
