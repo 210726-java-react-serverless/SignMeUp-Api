@@ -10,6 +10,7 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - cd registrar
       - mvn install
   post_build:
     commands:
