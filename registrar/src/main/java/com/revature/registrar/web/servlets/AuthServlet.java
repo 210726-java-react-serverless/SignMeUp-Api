@@ -35,7 +35,7 @@ public class AuthServlet extends HttpServlet {
         try {
 
             Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
-            Principal principal = userService.login(creds.getUsername(), creds.getPassword());
+            Principal principal = new Principal(userService.login(creds.getUsername(), creds.getPassword()));
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
 

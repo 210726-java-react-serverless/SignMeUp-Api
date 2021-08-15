@@ -63,3 +63,12 @@
 
 11.08.2021 13:08:50.635  - main - INFO  - com.revature.registrar.repository.UserRepository:Retieved(S) User{id=-938284617, firstName='Jack', lastName='Raney', email='email', username='raneyj', password='pass', isFaculty=false}
 
+11.08.2021 13:09:45.004  - main - ERROR - com.revature.registrar.services.ClassService:Invalid classModel data provided
+
+11.08.2021 13:09:45.043  - main - ERROR - com.revature.registrar.services.UserService:Duplicate
+11.08.2021 13:09:45.044  - main - ERROR - com.revature.registrar.services.UserService:Invalid user data provided
+
+11.08.2021 13:09:45.045  - main - ERROR - com.revature.registrar.services.UserService:Invalid user data provided
+
+11.08.2021 13:09:45.045  - main - ERROR - com.revature.registrar.services.UserService:Invalid ID
+

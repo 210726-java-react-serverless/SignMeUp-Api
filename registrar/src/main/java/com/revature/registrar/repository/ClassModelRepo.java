@@ -11,7 +11,6 @@ import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
-import com.revature.registrar.pages.RegisterPage;
 import com.revature.registrar.util.MongoClientFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -207,5 +206,10 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
 
+    }
+
+    @Override
+    public List<ClassModel> findAll(){
+        return null; //TODO: fix this method
     }
 }

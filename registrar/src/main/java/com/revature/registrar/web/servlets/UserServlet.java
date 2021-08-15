@@ -70,7 +70,7 @@ public class UserServlet extends HttpServlet {
                 List<UserDTO> users = userService.findAll();
                 respWriter.write(mapper.writeValueAsString(users));
             } else {
-                UserDTO user = userService.getUserWithId(Integer.parseInt(userIdParam));
+                UserDTO user = new UserDTO(userService.getUserWithId(Integer.parseInt(userIdParam)));
                 respWriter.write(mapper.writeValueAsString(user));
             }
 

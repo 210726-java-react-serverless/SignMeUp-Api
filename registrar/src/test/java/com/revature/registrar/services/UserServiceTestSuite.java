@@ -1,12 +1,11 @@
 package com.revature.registrar.services;
 
-import com.revature.registrar.App;
 import com.revature.registrar.exceptions.InvalidRequestException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.User;
 import com.revature.registrar.repository.UserRepository;
+import com.revature.registrar.util.PasswordUtils;
 import org.junit.*;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -16,6 +15,7 @@ import static org.mockito.Mockito.*;
 public class UserServiceTestSuite {
     UserService sut; //SUT = System Under Test
     UserRepository mockUserRepo;
+    PasswordUtils passwordUtils;
 
     /*
     common junit4 annotations
@@ -40,7 +40,8 @@ public class UserServiceTestSuite {
     @Before // runs before each test case
     public void beforeEachTest() {
         mockUserRepo = Mockito.mock(UserRepository.class);
-        sut = new UserService(mockUserRepo);
+        passwordUtils = Mockito.mock(PasswordUtils.class);
+        sut = new UserService(mockUserRepo, passwordUtils);
     }
 
     @After // runs after each test case

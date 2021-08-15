@@ -5,7 +5,6 @@ import com.revature.registrar.exceptions.OpenWindowException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.User;
-import com.revature.registrar.pages.RegisterPage;
 import com.revature.registrar.repository.ClassModelRepo;
 import com.revature.registrar.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;

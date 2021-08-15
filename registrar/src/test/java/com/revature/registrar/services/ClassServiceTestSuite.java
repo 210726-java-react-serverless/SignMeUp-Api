@@ -1,17 +1,12 @@
 package com.revature.registrar.services;
 
-import com.revature.registrar.App;
 import com.revature.registrar.exceptions.InvalidRequestException;
 import com.revature.registrar.exceptions.OpenWindowException;
-import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
-import com.revature.registrar.models.User;
 import com.revature.registrar.repository.ClassModelRepo;
-import com.revature.registrar.repository.UserRepository;
 import org.junit.*;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.*;
