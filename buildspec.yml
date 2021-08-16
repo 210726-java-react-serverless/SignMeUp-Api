@@ -10,10 +10,12 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - cd registrar
       - mvn install
   post_build:
     commands:
       - echo build completed on `date`
 artifacts:
   files:
-    - src/target/registrar-1.0.SNAPSHOT.war
+    - registrar/target/registrar-1.0.SNAPSHOT.war
+
