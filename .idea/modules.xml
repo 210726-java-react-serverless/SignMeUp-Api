@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/colby-jack_api_p1.iml" filepath="$PROJECT_DIR$/.idea/colby-jack_api_p1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/registrar/registrar.iml" filepath="$PROJECT_DIR$/registrar/registrar.iml" />
     </modules>
   </component>
 </project>
