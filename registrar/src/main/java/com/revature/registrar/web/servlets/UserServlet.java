@@ -33,6 +33,14 @@ public class UserServlet extends HttpServlet {
         this.mapper = mapper;
     }
 
+    /**
+     * /registrar/users: Get all users in the system
+     * /registrar/users/id: Get the user with the specified id
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println(req.getAttribute("filtered"));
@@ -88,6 +96,13 @@ public class UserServlet extends HttpServlet {
 
     }
 
+    /**
+     * /registrar/users: Register a new user in the system
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -116,7 +131,39 @@ public class UserServlet extends HttpServlet {
             e.printStackTrace();
             resp.setStatus(500); // server's fault
         }
+    }
 
+    /**
+     * /registrar/users/id: Update the user with the given id
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println(req.getAttribute("filtered"));
+        PrintWriter respWriter = resp.getWriter();
+        //resp.setContentType("application/json");
+        resp.setStatus(200);
+        respWriter.write("PUT Endpoint works");
+        return;
+    }
 
+    /**
+     * /registrar/users/id: Delete the user with the given id
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println(req.getAttribute("filtered"));
+        PrintWriter respWriter = resp.getWriter();
+        //resp.setContentType("application/json");
+        resp.setStatus(200);
+        respWriter.write("DELETE Endpoint works");
+        return;
     }
 }

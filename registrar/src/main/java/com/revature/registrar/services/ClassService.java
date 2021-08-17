@@ -20,10 +20,12 @@ import java.util.List;
  */
 public class ClassService {
     private final ClassModelRepo classRepo;
+    private final UserService userService;
     private final Logger logger = LogManager.getLogger(ClassService.class);
 
-    public ClassService(ClassModelRepo classRepo) {
+    public ClassService(ClassModelRepo classRepo, UserService userService) {
         this.classRepo = classRepo;
+        this.userService = userService;
     }
 
     /**
@@ -64,6 +66,7 @@ public class ClassService {
      * @return
      */
     public boolean delete(ClassModel classModel) {
+        userService.deleteClassFromAll(classModel);
         return classRepo.deleteById(classModel.getId());
     }
 
