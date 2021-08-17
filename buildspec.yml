@@ -18,6 +18,6 @@ phases:
       - unzip registrar.war -d artifact/
 artifacts:
   files:
-    - WEB-INF/**/*
+    - artifact/WEB-INF/**/*
   name: artifact
 
