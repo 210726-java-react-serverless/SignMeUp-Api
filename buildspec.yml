@@ -6,16 +6,18 @@ phases:
       java: corretto8
   pre_build:
     commands:
-      - echo Nothing to do in the pre_build phase...
+      - aws s3 cp s3://registrar-files/application.properties ./src/main/resources/application.properties
   build:
     commands:
       - echo Build started on `date`
       - cd registrar
-      - mvn install
+      - mvn package
+      - mv target/*.war ./registrar.war
   post_build:
     commands:
-      - echo build completed on `date`
+      - unzip registrar.war -d artifact/
 artifacts:
   files:
-    - registrar/target/registrar-1.0-SNAPSHOT.war
+    - WEB-INF/**/*
+  name: artifact
 
