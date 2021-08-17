@@ -15,8 +15,8 @@ phases:
   post_build:
     commands:
       - unzip registrar.war -d artifact/
+      - mv artifact/WEB-INF WEB-INF
 artifacts:
   files:
-    - artifact/WEB-INF/**/*
+    - WEB-INF/**/*
   name: artifact
-
