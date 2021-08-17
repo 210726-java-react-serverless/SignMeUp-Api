@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 public class ClassServiceTestSuite {
     ClassService sut; //SUT = System Under Test
     ClassModelRepo mockClassRepo;
+    UserService mockUserService;
 
     /*
     common junit4 annotations
@@ -42,7 +43,8 @@ public class ClassServiceTestSuite {
     @Before // runs before each test case
     public void beforeEachTest() {
         mockClassRepo = Mockito.mock(ClassModelRepo.class);
-        sut = new ClassService(mockClassRepo);
+        mockUserService = Mockito.mock(UserService.class);
+        sut = new ClassService(mockClassRepo, mockUserService);
     }
 
     @After // runs after each test case
