@@ -43,17 +43,15 @@ public class AuthServlet extends HttpServlet {
             session.setAttribute("auth-user", principal);
 
         } catch (AuthenticationException ae) {
-            resp.setStatus(401); // server's fault
+            resp.setStatus(401); // user's fault
             ErrorResponse errResp = new ErrorResponse(401, ae.getMessage());
             respWriter.write(mapper.writeValueAsString(errResp));
         }  catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500); // server's fault
-            ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
+            ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.\n"
+            + e.getMessage());
             respWriter.write(mapper.writeValueAsString(errResp));
-
-            //TODO: TEMPORARY
-            respWriter.write(e.getMessage());
         }
 
     }
