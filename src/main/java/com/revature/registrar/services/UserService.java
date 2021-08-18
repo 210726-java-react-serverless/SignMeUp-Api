@@ -148,9 +148,9 @@ public class UserService {
 
         //TODO: Validation here
 
-        String encryptedPassword = passUtil.generateSecurePassword(password);
+        //String encryptedPassword = passUtil.generateSecurePassword(password);
 
-        User user = userRepo.findUserByCredentials(username, encryptedPassword);
+        User user = userRepo.findUserByCredentials(username, password);
         setCurrUser(user);
         return user;
     }
