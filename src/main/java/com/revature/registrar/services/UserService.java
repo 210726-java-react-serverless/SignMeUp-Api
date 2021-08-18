@@ -149,9 +149,6 @@ public class UserService {
         //TODO: Validation here
 
         //String encryptedPassword = passUtil.generateSecurePassword(password);
-        if(password == null) {
-            throw new InvalidRequestException("Bad pass");
-        }
         User user = userRepo.findUserByCredentials(username, password);
         setCurrUser(user);
         return user;
