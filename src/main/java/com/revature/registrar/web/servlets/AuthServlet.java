@@ -47,14 +47,9 @@ public class AuthServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, ae.getMessage());
             respWriter.write(mapper.writeValueAsString(errResp));
         }  catch (Exception e) {
+            e.getCause().printStackTrace();
             resp.setStatus(500); // server's fault
             ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later. ");
-
-            String temp = errResp.getMessage();
-            temp += e.getStackTrace()[0].toString();
-            temp += e.getCause().getStackTrace()[0].toString();
-            errResp.setMessage(temp);
-            respWriter.write(mapper.writeValueAsString(errResp));
         }
 
     }

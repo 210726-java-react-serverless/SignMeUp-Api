@@ -33,7 +33,8 @@ public class MongoClientFactory {
         Properties appProperties = new Properties();
 
         try {
-            appProperties.load(new FileReader("src/main/resources/application.properties"));
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            appProperties.load(loader.getResourceAsStream("application.properties"));
 
             String ipAddress = appProperties.getProperty("ipAddress");
             int port = Integer.parseInt(appProperties.getProperty("port"));
@@ -41,16 +42,18 @@ public class MongoClientFactory {
             String username = appProperties.getProperty("username");
             char[] password = appProperties.getProperty("password").toCharArray();
 
+            System.out.println("AAAAAAAAAAAAAAAAAAH: " + dbName);
+
             List<ServerAddress> hosts = Collections.singletonList(new ServerAddress(ipAddress, port));
             MongoCredential credentials = MongoCredential.createScramSha1Credential(username, dbName, password);
-            CodecRegistry defaultCodecRegistry = getDefaultCodecRegistry();
-            PojoCodecProvider pojoCodecProvider= PojoCodecProvider.builder().automatic(true).build();
-            CodecRegistry pojoCodecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
+            //CodecRegistry defaultCodecRegistry = getDefaultCodecRegistry();
+            //PojoCodecProvider pojoCodecProvider= PojoCodecProvider.builder().automatic(true).build();
+            //CodecRegistry pojoCodecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
 
             MongoClientSettings settings = MongoClientSettings.builder()
                                                               .applyToClusterSettings(builder -> builder.hosts(hosts))
                                                               .credential(credentials)
-                                                              .codecRegistry(pojoCodecRegistry)
+                                                              //.codecRegistry(pojoCodecRegistry)
                                                               .build();
 
             this.mongoClient = MongoClients.create(settings);

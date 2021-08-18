@@ -11,7 +11,7 @@ import java.util.Set;
 //ClassModelDTO without reference to Users
 //Need this because ClassModelDTO -> FacultyDTO -> ClassModelDTO -> ...
 public class ClassModelMini {
-    private int id;
+    private String id;
     private String name;
     private int capacity;
     private String description;

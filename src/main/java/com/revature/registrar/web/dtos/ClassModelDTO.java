@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ClassModelDTO {
-    private int id;
+    private String id;
     private String name;
     private int capacity;
     private String description;

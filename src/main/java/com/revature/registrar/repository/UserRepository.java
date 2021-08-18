@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
 import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.util.MongoClientFactory;
+import com.revature.registrar.util.PasswordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -22,12 +24,12 @@ import java.util.*;
  */
 public class UserRepository implements CrudRepository<User> {
     private final Logger logger = LogManager.getLogger(UserRepository.class);
-    private MongoCollection<User> usersCollection;
+    private MongoCollection<Document> usersCollection;
 
-    public void UserRepository(){
+    public UserRepository() {
         MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
         MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-        usersCollection = bookstoreDb.getCollection("users",User.class);
+        usersCollection = bookstoreDb.getCollection("users");
     }
     /**
      * Searches the Database and returns a User with a matching ID
@@ -35,23 +37,27 @@ public class UserRepository implements CrudRepository<User> {
      * @return
      */
     @Override
-    public User findById(int id) {
+    public User findById(String id) {
         try {
 
             Document queryDoc = new Document("id", id);
-            User authUser = usersCollection.find(queryDoc).first();
+            Document authUserDoc = usersCollection.find(queryDoc).first();
 
-            if (authUser == null) {
+            if (authUserDoc == null) {
                 return null;
             }
 
-            if (authUser.isFaculty()) {
-                logger.info("Retieved(F) " + authUser + "\n");
+            ObjectMapper mapper = new ObjectMapper();
+            if ((boolean)authUserDoc.get("isFaculty")) {
+                Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
+                fac.setFaculty(true);
+                logger.info("Retieved(F) " + fac + "\n");
+                return fac;
             } else {
-                logger.info("Retieved(S) " + authUser + "\n");
+                Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);
+                logger.info("Retieved(S) " + stu + "\n");
+                return stu;
             }
-
-            return authUser;
 
         } catch (Exception e) {
             logger.error(e.getStackTrace() + "\n");
@@ -66,11 +72,18 @@ public class UserRepository implements CrudRepository<User> {
      */
     @Override
     public User save(User newResource) {
+        Document newUserDoc;
+        if(newResource.isFaculty()) {
+            Faculty fac = (Faculty) newResource;
+            newUserDoc = getFacultyDoc(fac);
+        } else {
+            Student stu = (Student) newResource;
+            newUserDoc = getStudentDoc(stu);
+        }
 
         try {
 
-            usersCollection.insertOne(newResource);
-            //newResource.setId(newUserDoc.get("_id").toString());
+            usersCollection.insertOne(newUserDoc);
             logger.info("Created " + newResource + "\n");
 
             return newResource;
@@ -184,24 +197,25 @@ public class UserRepository implements CrudRepository<User> {
      * @param id
      * @return
      */
-    public List<User> findWithClass(int id) {
+    public List<User> findWithClass(String id) {
         try {
 
             Document queryDoc = new Document("classes.id", id);
-            List<User> users = new ArrayList<>();
-            users = usersCollection.find(queryDoc).into(users);
-            if (users.size() == 0) {
+            List<Document> docs = new ArrayList<>();
+            docs = usersCollection.find(queryDoc).into(docs);
+            if (docs.size() == 0) {
                 return null;
             }
 
+            ObjectMapper mapper = new ObjectMapper();
             List<User> userDocs = new ArrayList<>();
-            for (User u : users) {
-                if (u.isFaculty()) {
-                    Faculty fac = (Faculty)u;
+            for (Document d : docs) {
+                if ((boolean)d.get("isFaculty")) {
+                    Faculty fac = mapper.readValue(d.toJson(), Faculty.class);
                     fac.setFaculty(true);
                     userDocs.add(fac);
                 } else {
-                    Student stu = (Student)u;
+                    Student stu = mapper.readValue(d.toJson(), Student.class);
                     userDocs.add(stu);
                 }
             }
@@ -220,7 +234,7 @@ public class UserRepository implements CrudRepository<User> {
      * @return
      */
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(String id) {
         return false;
     }
 
@@ -232,23 +246,22 @@ public class UserRepository implements CrudRepository<User> {
      */
     public User findUserByCredentials(String username, String encryptedPassword) {
         try {
-
             Document queryDoc = new Document("username", username)
                     .append("password", encryptedPassword);
 
-            User authUser = usersCollection.find(queryDoc).first();
-
-            if (authUser == null) {
+            Document authUserDoc = usersCollection.find(queryDoc).first();
+            if (authUserDoc == null) {
                 return null;
             }
 
-            if (authUser.isFaculty()) {
-                Faculty fac = (Faculty)authUser;
+            ObjectMapper mapper = new ObjectMapper();
+            if ((boolean)authUserDoc.get("isFaculty")) {
+                Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
                 fac.setFaculty(true);
                 logger.info("Retieved(F) " + fac + "\n");
                 return fac;
             } else {
-                Student stu = (Student)authUser;
+                Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);
                 logger.info("Retieved(S) " + stu + "\n");
                 return stu;
             }
@@ -262,15 +275,28 @@ public class UserRepository implements CrudRepository<User> {
     @Override
     public List<User> findAll() {
 
-        List<User> users = new ArrayList<>();
+        List<Document> docs = new ArrayList<>();
+        List<User> userDocs = new ArrayList<>();
+
 
         try {
-            usersCollection.find().into(users);
+            usersCollection.find().into(docs);
+            ObjectMapper mapper = new ObjectMapper();
+            for (Document d : docs) {
+                if ((boolean)d.get("isFaculty")) {
+                    Faculty fac = mapper.readValue(d.toJson(), Faculty.class);
+                    fac.setFaculty(true);
+                    userDocs.add(fac);
+                } else {
+                    Student stu = mapper.readValue(d.toJson(), Student.class);
+                    userDocs.add(stu);
+                }
+            }
         } catch (Exception e) {
             logger.error("An unexpected exception occurred.", e);
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
 
-        return users;
+        return userDocs;
     }
 }

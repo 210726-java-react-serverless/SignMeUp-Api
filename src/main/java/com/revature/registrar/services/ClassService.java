@@ -33,7 +33,7 @@ public class ClassService {
      * @param id
      * @return
      */
-    public ClassModel getClassWithId(int id) {
+    public ClassModel getClassWithId(String id) {
         ClassModel result = classRepo.findById(id);
         if(result == null) {
             logger.error("Invalid ID\n");

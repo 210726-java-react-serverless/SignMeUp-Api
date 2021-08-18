@@ -74,7 +74,7 @@ public class UserService {
      * @param id
      * @return
      */
-    public User getUserWithId(int id) {
+    public User getUserWithId(String id) {
         User result = userRepo.findById(id);
         if(result == null) {
             logger.error("Invalid ID\n");

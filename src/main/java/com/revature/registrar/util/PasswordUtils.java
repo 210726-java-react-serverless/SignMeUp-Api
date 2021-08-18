@@ -30,7 +30,7 @@ public class PasswordUtils {
         Properties appProperties = new Properties();
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            appProperties.load(loader.getResourceAsStream("src/main/resources/application.properties"));
+            appProperties.load(loader.getResourceAsStream("application.properties"));
             this.salt = appProperties.getProperty("salt");
             if (salt == null) throw new IllegalStateException("No salt found for password encryption.");
         } catch(Exception e) {

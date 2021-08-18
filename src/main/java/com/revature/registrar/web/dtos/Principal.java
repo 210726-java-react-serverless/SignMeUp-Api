@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Principal {
 
-    private int id;
+    private String id;
     private String username;
     private boolean isAdmin;
 
@@ -20,11 +20,11 @@ public class Principal {
         this.isAdmin = false;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -20,7 +20,7 @@ import javax.print.Doc;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ClassModel {
-    private int id;
+    private String id;
     private String name; //id based on name
     private int capacity;
     private String description;
@@ -33,7 +33,7 @@ public class ClassModel {
     public ClassModel(String name, String description, int capacity, Calendar open, Calendar close, Set<Faculty> faculty) {
         this.name = name;
         this.description = description;
-        this.id = name.hashCode();
+        this.id = String.valueOf(name.hashCode());
         this.capacity = capacity;
         this.openWindow = open;
         this.closeWindow = close;
@@ -53,7 +53,7 @@ public class ClassModel {
         this.capacity = capacity;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

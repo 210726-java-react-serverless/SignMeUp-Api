@@ -10,8 +10,8 @@ import java.util.List;
 public interface CrudRepository<E> {
 
     List<E> findAll();
-    E findById(int id);
+    E findById(String id);
     E save(E newResource);
     boolean update(E updatedResource);
-    boolean deleteById(int id);
+    boolean deleteById(String id);
 }

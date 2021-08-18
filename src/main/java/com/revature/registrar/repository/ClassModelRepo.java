@@ -33,7 +33,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
      * @return
      */
     @Override
-    public ClassModel findById(int id) {
+    public ClassModel findById(String id) {
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
@@ -191,7 +191,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
      * @return
      */
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(String id) {
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 

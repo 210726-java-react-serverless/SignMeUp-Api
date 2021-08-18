@@ -11,7 +11,7 @@ import org.bson.Document;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
-    private int id;
+    private String id;
     private String firstName;
     private String lastName;
     private String email;
@@ -34,10 +34,10 @@ public class User {
         this.isFaculty = isFaculty;
         this.isAdmin = false;
 
-        this.id = username.hashCode();
+        this.id = String.valueOf(username.hashCode());
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
