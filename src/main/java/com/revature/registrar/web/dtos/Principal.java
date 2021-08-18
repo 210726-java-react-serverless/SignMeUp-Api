@@ -8,6 +8,7 @@ public class Principal {
 
     private int id;
     private String username;
+    private boolean isAdmin;
 
     public Principal() {
         super();
@@ -16,6 +17,7 @@ public class Principal {
     public Principal(User subject) {
         this.id = subject.getId();
         this.username = subject.getUsername();
+        this.isAdmin = false;
     }
 
     public int getId() {
@@ -34,25 +36,32 @@ public class Principal {
         this.username = username;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Principal principal = (Principal) o;
-        return Objects.equals(id, principal.id) && Objects.equals(username, principal.username);
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
-    @Override
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
+        Principal principal = (Principal) object;
+        return id == principal.id && isAdmin == principal.isAdmin && java.util.Objects.equals(username, principal.username);
+    }
+
     public int hashCode() {
-        return Objects.hash(id, username);
+        return java.util.Objects.hash(super.hashCode(), id, username, isAdmin);
     }
 
-    @Override
-    public String toString() {
+    @java.lang.Override
+    public java.lang.String toString() {
         return "Principal{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", username='" + username + '\'' +
+                ", isAdmin=" + isAdmin +
                 '}';
     }
-
 }

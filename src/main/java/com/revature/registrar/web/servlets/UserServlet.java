@@ -61,7 +61,7 @@ public class UserServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } else if (!requestingUser.getAdmin()) {
+        } else if (!requestingUser.isAdmin()) {
             String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
             logger.info(msg);
             resp.setStatus(403);
