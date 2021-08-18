@@ -18,6 +18,7 @@ public class User {
     private String username;
     private String password;
     private boolean isFaculty;
+    private boolean isAdmin;
 
     public User() {
         super();
@@ -31,6 +32,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.isFaculty = isFaculty;
+        this.isAdmin = false;
 
         this.id = username.hashCode();
     }
@@ -83,6 +85,14 @@ public class User {
         isFaculty = faculty;
     }
 
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
     public Document getAsDoc() {
         Document doc = new Document("firstName", getFirstName())
                 .append("lastName",getLastName())
@@ -90,7 +100,8 @@ public class User {
                 .append("username", getUsername())
                 .append("password", getPassword())
                 .append("isFaculty", isFaculty())
-                .append("id", getId());
+                .append("id", getId())
+                .append("isAdmin", isAdmin());
         return doc;
     }
 
@@ -116,7 +127,8 @@ public class User {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", isFaculty=" + isFaculty +
+                ", isFaculty=" + isFaculty + '\'' +
+                ", isAdmin=" + isAdmin +
                 '}';
     }
 }
