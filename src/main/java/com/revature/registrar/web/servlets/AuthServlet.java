@@ -51,6 +51,9 @@ public class AuthServlet extends HttpServlet {
             resp.setStatus(500); // server's fault
             ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
             respWriter.write(mapper.writeValueAsString(errResp));
+
+            //TODO: TEMPORARY
+            respWriter.write(e.getMessage());
         }
 
     }
