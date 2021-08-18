@@ -113,7 +113,7 @@ public class UserServlet extends HttpServlet {
         try {
 
             User newUser = mapper.readValue(req.getInputStream(), User.class);
-            Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a new id
+            Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a valid id
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
             resp.setStatus(201);
