@@ -23,7 +23,7 @@ public class Faculty extends User{
     }
 
     public Faculty(User user){
-        super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), user.isFaculty());
+        super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), true);
     }
 
     public boolean isInClasses(ClassModel classModel) {

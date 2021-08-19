@@ -23,7 +23,7 @@ public class Student extends User{
     }
 
     public Student(User user){
-        super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), user.isFaculty());
+        super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), false);
     }
 
     public Set<ClassModel> getClasses() {
