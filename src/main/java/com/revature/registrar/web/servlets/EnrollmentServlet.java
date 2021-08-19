@@ -71,6 +71,7 @@ public class EnrollmentServlet extends HttpServlet {
             resp.setStatus(404);
             ErrorResponse errResp = new ErrorResponse(404, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
+            return;
         } else if (!requestingUser.isAdmin()) {
             String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
             logger.info(msg);
