@@ -146,9 +146,6 @@ public class UserService {
      */
     public User login(String username, String password) {
 
-        //TODO: Validation here
-
-        System.out.println("Username: "+ username);
         String encryptedPassword = passUtil.generateSecurePassword(password);
         User user = userRepo.findUserByCredentials(username, encryptedPassword);
         setCurrUser(user);
@@ -226,4 +223,7 @@ public class UserService {
         return true;
     }
 
+    public boolean deleteUser() {
+        return userRepo.deleteById(currUser.getId());
+    }
 }

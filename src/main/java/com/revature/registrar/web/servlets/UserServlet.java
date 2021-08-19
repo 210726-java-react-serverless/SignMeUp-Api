@@ -165,14 +165,43 @@ public class UserServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getAttribute("filtered"));
+        HttpSession session = req.getSession(false);
         PrintWriter respWriter = resp.getWriter();
-        //resp.setContentType("application/json");
+        resp.setContentType("application/json");
+
+        // If the session is not null, then grab the auth-user attribute from it
+        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+
+        if (requestingUser == null) {
+            String msg = "No session found, please login.";
+            logger.info(msg);
+            resp.setStatus(401);
+            ErrorResponse errResp = new ErrorResponse(401, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        } else if (!requestingUser.isAdmin()) {
+            String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
+            logger.info(msg);
+            resp.setStatus(403);
+            ErrorResponse errResp = new ErrorResponse(403, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+
+
+        //Delete based on entered id or current user?
+        
+        String userIdParam = req.getParameter("id");
+
+        if(userService.deleteUser())
+            respWriter.write("User successfully deleted.");
+        else
+            respWriter.write("User was not deleted.");
+
         resp.setStatus(200);
-        respWriter.write("DELETE Endpoint works");
+
         return;
     }
 }

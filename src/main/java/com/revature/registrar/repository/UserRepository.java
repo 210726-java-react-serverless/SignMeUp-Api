@@ -234,7 +234,20 @@ public class UserRepository implements CrudRepository<User> {
      */
     @Override
     public boolean deleteById(String id) {
-        return false;
+        try {
+
+            Document queryDoc = new Document("id", id);
+            Document authUserDoc = usersCollection.findOneAndDelete(queryDoc);
+
+            if (authUserDoc == null) {
+                return false;
+            }
+            return true;
+
+        } catch (Exception e) {
+            logger.error(e.getStackTrace() + "\n");
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
     }
 
     /**
