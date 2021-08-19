@@ -121,12 +121,16 @@ public class UserServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            User newUser;
-
             //Jerry Rigged work around
-            newUser = mapper.readValue(req.getInputStream(), Student.class);
+            User newUser = mapper.readValue(req.getInputStream(), User.class);
+
+
+            System.out.println(newUser.toString());
+
             if(newUser.isFaculty())
                 newUser = new Faculty(newUser);
+            else
+                newUser = new Student(newUser);
 
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a valid id
             String payload = mapper.writeValueAsString(principal);
@@ -173,6 +177,9 @@ public class UserServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
+    //*****************
+    //TODO: Make sure classes with user remove the user if they are deleted (REF INT.)
+    //*****************
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
@@ -200,7 +207,7 @@ public class UserServlet extends HttpServlet {
 
 
         //Delete based on entered id or current user?
-        
+
         String userIdParam = req.getParameter("id");
 
         if(userService.deleteUser())

@@ -2,6 +2,7 @@ package com.revature.registrar.models;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bson.Document;
 
 /**
@@ -17,7 +18,9 @@ public class User {
     private String email;
     private String username;
     private String password;
+    @JsonProperty("isFaculty")      //Not sure why this is needed but is.
     private boolean isFaculty;
+    @JsonProperty("isAdmin")
     private boolean isAdmin;
 
     public User() {
