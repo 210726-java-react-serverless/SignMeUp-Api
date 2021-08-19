@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Projections;
+
 import com.mongodb.client.model.Updates;
 import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.Faculty;

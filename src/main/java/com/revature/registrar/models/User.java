@@ -1,7 +1,7 @@
 package com.revature.registrar.models;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.bson.Document;
 
 /**

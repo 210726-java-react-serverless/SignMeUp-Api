@@ -12,7 +12,6 @@ import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.web.dtos.UserDTO;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
-import org.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +20,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class UserServlet extends HttpServlet {
 
