@@ -1,6 +1,7 @@
 package com.revature.registrar.services;
 
 import com.revature.registrar.exceptions.InvalidRequestException;
+import com.revature.registrar.exceptions.ResourceNotFoundException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
@@ -78,7 +79,7 @@ public class UserService {
         User result = userRepo.findById(id);
         if(result == null) {
             logger.error("Invalid ID\n");
-            throw new InvalidRequestException("Invalid ID");
+            throw new ResourceNotFoundException();
         } else {
             return result;
         }
