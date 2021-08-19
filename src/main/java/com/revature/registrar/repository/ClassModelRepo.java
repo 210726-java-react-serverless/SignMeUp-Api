@@ -37,8 +37,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("classes");
+            MongoDatabase project1db = mongoClient.getDatabase("project0");
+            MongoCollection<Document> usersCollection = project1db.getCollection("classes");
             Document queryDoc = new Document("id", id);
 
             Document authClassDoc = usersCollection.find(queryDoc).first();
@@ -92,8 +92,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("classes");
+            MongoDatabase project1db = mongoClient.getDatabase("project0");
+            MongoCollection<Document> usersCollection = project1db.getCollection("classes");
 
             usersCollection.insertOne(newUserDoc);
             logger.info("Created " + newResource + "\n");
@@ -114,8 +114,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("classes");
+            MongoDatabase project1db = mongoClient.getDatabase("project0");
+            MongoCollection<Document> usersCollection = project1db.getCollection("classes");
 
             long current = Calendar.getInstance().getTimeInMillis();
 
@@ -163,8 +163,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("classes");
+            MongoDatabase project1db = mongoClient.getDatabase("project0");
+            MongoCollection<Document> usersCollection = project1db.getCollection("classes");
 
             Bson updates = Updates.combine(
                     Updates.set("capacity", updatedResource.getCapacity()),
@@ -195,8 +195,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("classes");
+            MongoDatabase project1db = mongoClient.getDatabase("project0");
+            MongoCollection<Document> usersCollection = project1db.getCollection("classes");
             Document queryDoc = new Document("id", id);
             usersCollection.deleteOne(queryDoc);
             return true;

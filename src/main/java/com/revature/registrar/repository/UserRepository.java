@@ -28,8 +28,8 @@ public class UserRepository implements CrudRepository<User> {
 
     public UserRepository() {
         MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-        MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-        usersCollection = bookstoreDb.getCollection("users");
+        MongoDatabase project1db = mongoClient.getDatabase("project0");
+        usersCollection = project1db.getCollection("users");
     }
     /**
      * Searches the Database and returns a User with a matching ID
@@ -82,7 +82,6 @@ public class UserRepository implements CrudRepository<User> {
         }
 
         try {
-
             usersCollection.insertOne(newUserDoc);
             logger.info("Created " + newResource + "\n");
 
