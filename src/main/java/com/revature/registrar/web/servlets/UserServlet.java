@@ -150,6 +150,7 @@ public class UserServlet extends HttpServlet {
 
     /**
      * /registrar/users/id: Update the user with the given id
+     * TODO: STRETCH GOAL
      * @param req
      * @param resp
      * @throws ServletException
