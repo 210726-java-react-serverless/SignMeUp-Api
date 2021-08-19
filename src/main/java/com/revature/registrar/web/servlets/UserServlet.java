@@ -65,6 +65,21 @@ public class UserServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
+        } if(req.getParameter("id") != null) {
+            //We are doing a find specific user.
+            String userIdParam = req.getParameter("id");
+            if(requestingUser.isAdmin() || (userIdParam == requestingUser.getId())) {
+                //Return the User
+                UserDTO user = new UserDTO(userService.getUserWithId(userIdParam));
+                respWriter.write(mapper.writeValueAsString(user));
+            } else {
+                String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
+                logger.info(msg);
+                resp.setStatus(403);
+                ErrorResponse errResp = new ErrorResponse(403, msg);
+                respWriter.write(mapper.writeValueAsString(errResp));
+            }
+            return;
         } else if (!requestingUser.isAdmin()) {
             String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
             logger.info(msg);
@@ -74,18 +89,12 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
+        //We want to find all
         String userIdParam = req.getParameter("id");
 
         try {
-
-            if (userIdParam == null) {
-                List<UserDTO> users = userService.findAll();
-                respWriter.write(mapper.writeValueAsString(users));
-            } else {
-                UserDTO user = new UserDTO(userService.getUserWithId(userIdParam));
-                respWriter.write(mapper.writeValueAsString(user));
-            }
-
+            List<UserDTO> users = userService.findAll();
+            respWriter.write(mapper.writeValueAsString(users));
         } catch (ResourceNotFoundException rnfe) {
             resp.setStatus(404);
             ErrorResponse errResp = new ErrorResponse(404, rnfe.getMessage());
@@ -96,8 +105,6 @@ public class UserServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
             respWriter.write(mapper.writeValueAsString(errResp));
         }
-
-
     }
 
     /**
