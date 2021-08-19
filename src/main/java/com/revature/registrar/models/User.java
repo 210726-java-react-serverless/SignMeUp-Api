@@ -41,6 +41,10 @@ public class User {
         return id;
     }
 
+    public void setId(){
+        this.id = String.valueOf(username.hashCode());
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -67,6 +71,11 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username){
+        this.username = username;
+        this.id = String.valueOf(username.hashCode());
     }
 
     public String getPassword() {

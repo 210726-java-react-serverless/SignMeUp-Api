@@ -22,6 +22,10 @@ public class Faculty extends User{
         super(firstName, lastName, email, username, password, true);
     }
 
+    public Faculty(User user){
+        super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), user.isFaculty());
+    }
+
     public boolean isInClasses(ClassModel classModel) {
         for(ClassModel c : classes) {
             if(c.getId() == classModel.getId()) {

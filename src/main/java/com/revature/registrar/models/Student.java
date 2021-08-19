@@ -22,6 +22,10 @@ public class Student extends User{
         super(firstName, lastName, email, username, password, false);
     }
 
+    public Student(User user){
+        super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), user.isFaculty());
+    }
+
     public Set<ClassModel> getClasses() {
         return classes;
     }
