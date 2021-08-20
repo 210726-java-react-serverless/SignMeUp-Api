@@ -19,7 +19,7 @@ public class CalendarBuilder {
      * @return
      * @throws Exception
      */
-    public Calendar build() throws Exception {
+    public long build() throws Exception {
         System.out.print("Date (MM/DD/YYYY):\n> ");
         String response = consoleReader.readLine();
 
@@ -32,12 +32,12 @@ public class CalendarBuilder {
             day = Integer.parseInt(vals[1]);
             year = Integer.parseInt(vals[2]);
         } catch (Exception e) {
-            return null;
+            return -1;
         }
 
-        if(month <= 0 || month > 12) return null;
-        if(day <= 0 || day > 31) return null;
-        if(year < 2021) return null;
+        if(month <= 0 || month > 12) return -1;
+        if(day <= 0 || day > 31) return -1;
+        if(year < 2021) return -1;
 
         System.out.print("Time (HH:MM):\n> ");
 
@@ -50,11 +50,11 @@ public class CalendarBuilder {
             hour = Integer.parseInt(vals2[0]);
             minute = Integer.parseInt(vals2[1]);
         } catch (Exception e) {
-            return null;
+            return -1;
         }
 
-        if(hour <= 0 || hour >= 24) return null;
-        if(minute < 0 || minute >= 60) return null;
+        if(hour <= 0 || hour >= 24) return -1;
+        if(minute < 0 || minute >= 60) return -1;
 
 
         Calendar date = new Calendar.Builder()
@@ -63,6 +63,6 @@ public class CalendarBuilder {
                 .setTimeOfDay(hour, minute,0)
                 .build();
 
-        return date;
+        return date.getTimeInMillis();
     }
 }

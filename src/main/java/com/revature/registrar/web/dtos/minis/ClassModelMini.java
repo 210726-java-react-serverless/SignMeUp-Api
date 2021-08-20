@@ -15,8 +15,8 @@ public class ClassModelMini {
     private String name;
     private int capacity;
     private String description;
-    private Calendar openWindow;
-    private Calendar closeWindow;
+    private long openWindow;
+    private long closeWindow;
 
 
     public ClassModelMini(ClassModel subject) {

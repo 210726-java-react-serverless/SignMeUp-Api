@@ -25,13 +25,14 @@ public class ClassModel {
     private int capacity;
     private String description;
 
-    private Calendar openWindow;
-    private Calendar closeWindow;
+    private long openWindow;
+    private long closeWindow;
+
 
     private Set<Student> students;
     private Set<Faculty> faculty; //Could have multiple faculty members per class
 
-    public ClassModel(String name, String description, int capacity, Calendar open, Calendar close, Set<Faculty> faculty) {
+    public ClassModel(String name, String description, int capacity, long open, long close, Set<Faculty> faculty) {
         this.name = name;
         this.description = description;
         this.id = String.valueOf(name.hashCode());
@@ -89,8 +90,8 @@ public class ClassModel {
                 .append("id", getId())
                 .append("description", getDescription())
                 .append("capacity", getCapacity())
-                .append("openWindow", getOpenWindow().getTimeInMillis())
-                .append("closeWindow", getCloseWindow().getTimeInMillis());
+                .append("openWindow", getOpenWindow())
+                .append("closeWindow", getCloseWindow());
         return doc;
     }
 
@@ -99,19 +100,19 @@ public class ClassModel {
         return faculty;
     }
 
-    public Calendar getOpenWindow() {
+    public long getOpenWindow() {
         return openWindow;
     }
 
-    public void setOpenWindow(Calendar openWindow) {
+    public void setOpenWindow(long openWindow) {
         this.openWindow = openWindow;
     }
 
-    public Calendar getCloseWindow() {
+    public long getCloseWindow() {
         return closeWindow;
     }
 
-    public void setCloseWindow(Calendar closeWindow) {
+    public void setCloseWindow(long closeWindow) {
         this.closeWindow = closeWindow;
     }
 

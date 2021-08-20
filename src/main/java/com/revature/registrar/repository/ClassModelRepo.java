@@ -48,22 +48,22 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
                 return null;
             } else {
                 //Convert from millis to Calendar
-                Date d = new Date((long)authClassDoc.get("openWindow"));
-                Calendar openDate = new Calendar.Builder()
-                        .setInstant(d)
-                        .build();
-                d = new Date((long)authClassDoc.get("closeWindow"));
-                Calendar closeDate = new Calendar.Builder()
-                        .setInstant(d)
-                        .build();
-                authClassDoc.remove("openWindow");
-                authClassDoc.remove("closeWindow");
+                //Date d = new Date((long)authClassDoc.get("openWindow"));
+                //Calendar openDate = new Calendar.Builder()
+                //        .setInstant(d)
+                //        .build();
+                //d = new Date((long)authClassDoc.get("closeWindow"));
+                //Calendar closeDate = new Calendar.Builder()
+                //        .setInstant(d)
+                //        .build();
+                //authClassDoc.remove("openWindow");
+                //authClassDoc.remove("closeWindow");
                 //authClassDoc.append("openWindow", openDate);
                 //authClassDoc.append("closeWindow", closeDate);
                 ObjectMapper mapper = new ObjectMapper();
                 ClassModel auth = mapper.readValue(authClassDoc.toJson(), ClassModel.class);
-                auth.setOpenWindow(openDate);
-                auth.setCloseWindow(closeDate);
+                //auth.setOpenWindow(openDate);
+                //auth.setCloseWindow(closeDate);
                 return auth;
             }
 
@@ -83,8 +83,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
         Document newUserDoc = new Document("name", newResource.getName())
                 .append("capacity", newResource.getCapacity())
                 .append("description", newResource.getDescription())
-                .append("openWindow", newResource.getOpenWindow().getTimeInMillis())
-                .append("closeWindow", newResource.getCloseWindow().getTimeInMillis())
+                .append("openWindow", newResource.getOpenWindow())
+                .append("closeWindow", newResource.getCloseWindow())
                 .append("id", newResource.getId())
                 .append("students", newResource.getStudentsAsDoc())
                 .append("faculty", newResource.getFacultyAsDoc());
@@ -126,19 +126,19 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
 
             List<ClassModelDTO> result = new ArrayList<>();
             for (Document doc: usersCollection.find(query)) {
-                Date d = new Date((long)doc.get("openWindow"));
-                Calendar openDate = new Calendar.Builder()
-                        .setInstant(d)
-                        .build();
-                d = new Date((long)doc.get("closeWindow"));
-                Calendar closeDate = new Calendar.Builder()
-                        .setInstant(d)
-                        .build();
+                //Date d = new Date((long)doc.get("openWindow"));
+                //Calendar openDate = new Calendar.Builder()
+                //        .setInstant(d)
+                //        .build();
+                //d = new Date((long)doc.get("closeWindow"));
+                //Calendar closeDate = new Calendar.Builder()
+                //        .setInstant(d)
+                //        .build();
 
                 ObjectMapper mapper = new ObjectMapper();
                 ClassModel classModel = mapper.readValue(doc.toJson(), ClassModel.class);
-                classModel.setOpenWindow(openDate);
-                classModel.setCloseWindow(closeDate);
+                //classModel.setOpenWindow(openDate);
+                //classModel.setCloseWindow(closeDate);
                 result.add(new ClassModelDTO(classModel));
             }
 
@@ -170,8 +170,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
             Bson updates = Updates.combine(
                     Updates.set("capacity", updatedResource.getCapacity()),
                     Updates.set("description", updatedResource.getDescription()),
-                    Updates.set("openWindow", updatedResource.getOpenWindow().getTimeInMillis()),
-                    Updates.set("closeWindow", updatedResource.getCloseWindow().getTimeInMillis()),
+                    Updates.set("openWindow", updatedResource.getOpenWindow()),
+                    Updates.set("closeWindow", updatedResource.getCloseWindow()),
                     Updates.set("students", updatedResource.getStudentsAsDoc()),
                     Updates.set("faculty", updatedResource.getFacultyAsDoc()));
 
