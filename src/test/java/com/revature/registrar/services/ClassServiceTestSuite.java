@@ -66,7 +66,7 @@ public class ClassServiceTestSuite {
 
         // Arrange expectations
         boolean expected = true;
-        ClassModel valid = new ClassModel("valid", "valid", 2, open, close, fac);
+        ClassModel valid = new ClassModel("valid", "valid", 2, open.getTimeInMillis(), close.getTimeInMillis(), fac);
 
 
         // Act
@@ -91,8 +91,8 @@ public class ClassServiceTestSuite {
         Set<Faculty> fac = new HashSet<>();
         Set<Student> stu = new HashSet<>();
 
-        ClassModel expected = new ClassModel("valid", "valid", 2, open, close, fac);
-        ClassModel valid = new ClassModel("valid", "valid", 2, open, close, fac);
+        ClassModel expected = new ClassModel("valid", "valid", 2, open.getTimeInMillis(), close.getTimeInMillis(), fac);
+        ClassModel valid = new ClassModel("valid", "valid", 2, open.getTimeInMillis(), close.getTimeInMillis(), fac);
 
 
         when(mockClassRepo.save(any())).thenReturn(expected);
@@ -120,7 +120,7 @@ public class ClassServiceTestSuite {
         Set<Faculty> fac = new HashSet<>();
         Set<Student> stu = new HashSet<>();
 
-        ClassModel invalid = new ClassModel("", "valid", 2, open, close, fac);
+        ClassModel invalid = new ClassModel("", "valid", 2, open.getTimeInMillis(), close.getTimeInMillis(), fac);
 
 
         when(mockClassRepo.save(any())).thenReturn(invalid);

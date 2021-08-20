@@ -60,4 +60,13 @@ public class Student extends User{
             }
         }
     }
+
+    @Override
+    public String toString() {
+        String result = super.toString();
+        result += "Student{" +
+                "classes=" + classes +
+                '}';
+        return result;
+    }
 }

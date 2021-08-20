@@ -23,33 +23,19 @@ import java.util.stream.Collectors;
  */
 public class UserService {
     private final UserRepository userRepo;
+    private ClassService classService;
     private final Logger logger = LogManager.getLogger(UserService.class);
 
     private final PasswordUtils passUtil;
 
 
-
-    private User currUser;
-
-    /**
-     * Retrieves the current logged in User
-     * @return
-     */
-    public User getCurrUser() {
-        return currUser;
-    }
-
-    /**
-     * Sets the current logged in User
-     * @param currUser
-     */
-    public void setCurrUser(User currUser) {
-        this.currUser = currUser;
-    }
-
     public UserService(UserRepository userRepo, PasswordUtils passUtil) {
         this.userRepo = userRepo;
         this.passUtil = passUtil;
+    }
+
+    public void setClassService(ClassService classService) {
+        this.classService = classService;
     }
 
     /**
@@ -149,7 +135,6 @@ public class UserService {
 
         String encryptedPassword = passUtil.generateSecurePassword(password);
         User user = userRepo.findUserByCredentials(username, encryptedPassword);
-        setCurrUser(user);
         return user;
     }
 
@@ -190,7 +175,18 @@ public class UserService {
         return true;
     }
 
-    public boolean deleteUser() {
-        return userRepo.deleteById(currUser.getId());
+    public boolean deleteUser(User user) {
+        //Unenroll student from all classes
+        if(user.isFaculty()) {
+            for(ClassModel classModel : ((Faculty) user).getClasses()) {
+                classService.unenroll(user.getId(), classModel.getId());
+            }
+        } else {
+            for(ClassModel classModel : ((Student) user).getClasses()) {
+                classService.unenroll(user.getId(), classModel.getId());
+            }
+        }
+
+        return userRepo.deleteById(user.getId());
     }
 }

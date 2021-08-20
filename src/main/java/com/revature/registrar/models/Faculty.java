@@ -61,4 +61,13 @@ public class Faculty extends User{
         }
     }
 
+    @Override
+    public String toString() {
+        String result = super.toString();
+        result += "Faculty{" +
+                "classes=" + classes +
+                '}';
+        return result;
+    }
+
 }
