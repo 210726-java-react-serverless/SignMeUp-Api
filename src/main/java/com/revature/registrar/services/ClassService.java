@@ -7,6 +7,7 @@ import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.User;
 import com.revature.registrar.repository.ClassModelRepo;
 import com.revature.registrar.repository.UserRepository;
+import com.revature.registrar.web.dtos.ClassModelDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +57,7 @@ public class ClassService {
      * Retrieves a list of classes where the current date lies between the openDate and closeDate
      * @return
      */
-    public List<ClassModel> getOpenClasses() {
+    public List<ClassModelDTO> getOpenClasses() {
         return classRepo.findOpenClasses();
     }
 
