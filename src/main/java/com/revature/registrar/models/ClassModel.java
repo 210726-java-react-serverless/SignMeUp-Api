@@ -24,6 +24,7 @@ public class ClassModel {
     private String name; //id based on name
     private int capacity;
     private String description;
+
     private Calendar openWindow;
     private Calendar closeWindow;
 
