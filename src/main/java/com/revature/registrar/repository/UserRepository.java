@@ -11,7 +11,6 @@ import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.util.MongoClientFactory;
-import com.revature.registrar.util.PasswordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
