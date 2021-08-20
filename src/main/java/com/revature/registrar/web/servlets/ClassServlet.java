@@ -2,6 +2,7 @@ package com.revature.registrar.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.User;
@@ -167,8 +168,28 @@ public class ClassServlet extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getAttribute("filtered"));
+        //receive an id from req for deleting class
         PrintWriter respWriter = resp.getWriter();
+        String id = req.getParameter("id").toString();
+        ClassModel classModel = null;
+
+        try {
+            classModel = classService.getClassWithId(id);
+        } catch (ResourceNotFoundException rnfe) {
+            respWriter.write("failed to retrieve class with given ID.");
+            logger.debug("class with given ID was not found in DB.",rnfe);
+            resp.setStatus(404);
+            return;
+        } catch (Exception e){
+            respWriter.write("Unexpected error has occurred.");
+            logger.error("Unexpected error has occurred.", e);
+            resp.setStatus(500);
+            return;
+        }
+
+        classService.delete(classModel);
+        userService.deleteClassFromAll(classModel);
+
         //resp.setContentType("application/json");
         resp.setStatus(200);
         respWriter.write("DELETE Endpoint works");

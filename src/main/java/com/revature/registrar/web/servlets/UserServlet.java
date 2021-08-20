@@ -125,7 +125,6 @@ public class UserServlet extends HttpServlet {
             //Jerry Rigged work around
             User newUser = mapper.readValue(req.getInputStream(), User.class);
 
-
             System.out.println(newUser.toString());
 
             if(newUser.isFaculty())

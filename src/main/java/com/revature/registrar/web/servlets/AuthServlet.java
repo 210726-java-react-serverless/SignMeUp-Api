@@ -6,6 +6,8 @@ import com.revature.registrar.exceptions.AuthenticationException;
 import com.revature.registrar.web.dtos.Credentials;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +19,7 @@ import java.io.PrintWriter;
 
 public class AuthServlet extends HttpServlet {
 
+    private final Logger logger = LogManager.getLogger(AuthServlet.class);
     private final UserService userService;
     private final ObjectMapper mapper;
 
@@ -41,6 +44,8 @@ public class AuthServlet extends HttpServlet {
 
             HttpSession session = req.getSession();
             session.setAttribute("auth-user", principal);
+
+            logger.info("Authenticated as "+ principal.getUsername());
 
         } catch (AuthenticationException ae) {
             resp.setStatus(401); // user's fault
