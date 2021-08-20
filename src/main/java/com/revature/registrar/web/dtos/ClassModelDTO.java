@@ -14,8 +14,8 @@ public class ClassModelDTO {
     private String name;
     private int capacity;
     private String description;
-    private Calendar openWindow;
-    private Calendar closeWindow;
+    private long openWindow;
+    private long closeWindow;
 
     private Set<UserDTO> students = new HashSet<>();
     private Set<UserDTO> faculty = new HashSet<>(); //Could have multiple faculty members per class

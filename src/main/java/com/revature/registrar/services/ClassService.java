@@ -104,8 +104,8 @@ public class ClassService {
         }
 
         Calendar current = Calendar.getInstance();
-        boolean openOkay = classModel.getOpenWindow().getTimeInMillis() < current.getTimeInMillis();
-        boolean closeOkay = classModel.getCloseWindow().getTimeInMillis() > current.getTimeInMillis();
+        boolean openOkay = classModel.getOpenWindow() < current.getTimeInMillis();
+        boolean closeOkay = classModel.getCloseWindow() > current.getTimeInMillis();
         if(openOkay && closeOkay) {
             return true;
         } else {
@@ -198,10 +198,10 @@ public class ClassService {
         if(classModel.getCapacity() <= 0) return false;
         if(classModel.getCapacity() < classModel.getStudents().size()) return false;
         //Open/Close Windows cannot be before the current time
-        if(classModel.getOpenWindow() == null) return false;
-        if(classModel.getCloseWindow() == null || classModel.getCloseWindow().getTimeInMillis() <= current.getTimeInMillis() ) return false;
+        if(classModel.getOpenWindow() <= 0) return false;
+        if(classModel.getCloseWindow() <= 0 || classModel.getCloseWindow() <= current.getTimeInMillis() ) return false;
         //Open has to be before the close
-        if(classModel.getCloseWindow().getTimeInMillis() <= classModel.getOpenWindow().getTimeInMillis() ) return false;
+        if(classModel.getCloseWindow() <= classModel.getOpenWindow() ) return false;
 
         if(classModel.getStudents() == null) return false;
         if(classModel.getFaculty() == null) return false;
@@ -211,7 +211,7 @@ public class ClassService {
             logger.error("Duplicate");
             throw new ResourcePersistenceException("Duplicate");
         }
-        if(classModel.getOpenWindow().getTimeInMillis() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
+        if(classModel.getOpenWindow() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
 
         return true;
     }
