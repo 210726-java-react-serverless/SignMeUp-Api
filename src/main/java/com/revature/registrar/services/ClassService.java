@@ -2,8 +2,10 @@ package com.revature.registrar.services;
 
 import com.revature.registrar.exceptions.InvalidRequestException;
 import com.revature.registrar.exceptions.OpenWindowException;
+import com.revature.registrar.exceptions.ResourceNotFoundException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.ClassModel;
+import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.repository.ClassModelRepo;
 import com.revature.registrar.repository.UserRepository;
@@ -41,6 +43,75 @@ public class ClassService {
             throw new InvalidRequestException("Invalid ID");
         } else {
             return classRepo.findById(id);
+        }
+    }
+
+    /**
+     * Enrolls a user in a course
+     * @param user_id
+     * @param class_id
+     */
+    public void enroll(String user_id, String class_id) {
+        ClassModel classModel = null;
+        try {
+            classModel = getClassWithId(class_id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
+
+        Student curr = (Student)userService.getUserWithId(user_id);
+        if(curr.isInClasses(classModel)) {
+            logger.info(user_id + " is already enrolled in " + class_id);
+            System.out.println("ALREADY ENROLLED");
+            return;
+        }
+
+        classModel.addStudent(curr);
+        curr.addClass(classModel);
+
+        //Need to persist these changes to the db with UPDATE
+        update(classModel);
+        userService.update(curr);
+    }
+
+    /**
+     * Unenrolls a user from a course
+     * classService.update(classModel) should be run afterwards to ensure the classdb is updated
+     * @param user_id
+     * @param class_id
+     */
+    public void unenroll(String user_id, String class_id) {
+        ClassModel classModel = null;
+        Student curr = null;
+        try {
+            classModel = getClassWithId(class_id);
+            curr = (Student)userService.getUserWithId(user_id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
+
+        if(canUnenroll(curr, classModel)) {
+            classModel.removeStudent(curr);
+            curr.removeClass(classModel);
+            update(classModel);
+            userService.update(curr);
+        }
+    }
+
+    private boolean canUnenroll(Student user, ClassModel classModel) {
+        if(!user.isInClasses(classModel)) {
+            logger.error("Cannot unenroll from a class that they are not enrolled in\n");
+            throw new InvalidRequestException("Student cannot unenroll from a class that they are not enrolled in");
+        }
+
+        Calendar current = Calendar.getInstance();
+        boolean openOkay = classModel.getOpenWindow().getTimeInMillis() < current.getTimeInMillis();
+        boolean closeOkay = classModel.getCloseWindow().getTimeInMillis() > current.getTimeInMillis();
+        if(openOkay && closeOkay) {
+            return true;
+        } else {
+            logger.error("Cannot unenroll from a class outside of the Registration Window\n");
+            throw new InvalidRequestException("Cannot unenroll from a class outside of the Registration Window");
         }
     }
 

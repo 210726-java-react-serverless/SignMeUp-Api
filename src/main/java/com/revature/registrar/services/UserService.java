@@ -1,6 +1,7 @@
 package com.revature.registrar.services;
 
 import com.revature.registrar.exceptions.InvalidRequestException;
+import com.revature.registrar.exceptions.ResourceNotFoundException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
@@ -78,7 +79,7 @@ public class UserService {
         User result = userRepo.findById(id);
         if(result == null) {
             logger.error("Invalid ID\n");
-            throw new InvalidRequestException("Invalid ID");
+            throw new ResourceNotFoundException();
         } else {
             return result;
         }
@@ -150,40 +151,6 @@ public class UserService {
         User user = userRepo.findUserByCredentials(username, encryptedPassword);
         setCurrUser(user);
         return user;
-    }
-
-    /**
-     * Unenrolls a user from a class and returns the altered classModel
-     * classService.update(classModel) should be run afterwards to ensure the classdb is updated
-     * @param classModel
-     * @return
-     */
-    public ClassModel unenrollClass(ClassModel classModel) {
-        User user = getCurrUser();
-        if(user.isFaculty()) {
-            logger.error("Faculty cannot unenroll from a class\n");
-            throw new InvalidRequestException("Faculty cannot unenroll from a class");
-        }
-
-        Student curr = (Student) user;
-
-        if(!curr.isInClasses(classModel)) {
-            logger.error("Cannot unenroll from a class that they are not enrolled in\n");
-            throw new InvalidRequestException("Cannot unenroll from a class that they are not enrolled in");
-        }
-
-        Calendar current = Calendar.getInstance();
-        boolean openOkay = classModel.getOpenWindow().getTimeInMillis() < current.getTimeInMillis();
-        boolean closeOkay = classModel.getCloseWindow().getTimeInMillis() > current.getTimeInMillis();
-        if(openOkay && closeOkay) {
-            classModel.removeStudent(curr);
-            curr.removeClass(classModel);
-            update(user);
-            return classModel;
-        } else {
-            logger.error("Cannot unenroll from a class outside of the Registration Window\n");
-            throw new InvalidRequestException("Cannot unenroll from a class outside of the Registration Window");
-        }
     }
 
     /**

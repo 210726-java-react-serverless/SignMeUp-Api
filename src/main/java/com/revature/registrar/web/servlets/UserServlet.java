@@ -69,7 +69,8 @@ public class UserServlet extends HttpServlet {
             return;
         } if(userIdParam!=null) {
             //We are doing a find specific user.
-            if(requestingUser.isAdmin() || (userIdParam == requestingUser.getId())) {
+            if(requestingUser.isAdmin() || (userIdParam.equals(requestingUser.getId()))) {
+
                 //Return the User
                 UserDTO user = new UserDTO(userService.getUserWithId(userIdParam));
                 respWriter.write(mapper.writeValueAsString(user));
@@ -79,6 +80,7 @@ public class UserServlet extends HttpServlet {
                 resp.setStatus(403);
                 ErrorResponse errResp = new ErrorResponse(403, msg);
                 respWriter.write(mapper.writeValueAsString(errResp));
+                return;
             }
             return;
         } else if (!requestingUser.isAdmin()) {
@@ -153,6 +155,7 @@ public class UserServlet extends HttpServlet {
 
     /**
      * /registrar/users/id: Update the user with the given id
+     * TODO: STRETCH GOAL
      * @param req
      * @param resp
      * @throws ServletException
