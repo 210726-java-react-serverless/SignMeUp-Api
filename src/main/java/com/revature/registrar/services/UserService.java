@@ -154,40 +154,6 @@ public class UserService {
     }
 
     /**
-     * Unenrolls a user from a class and returns the altered classModel
-     * classService.update(classModel) should be run afterwards to ensure the classdb is updated
-     * @param classModel
-     * @return
-     */
-    public ClassModel unenrollClass(ClassModel classModel) {
-        User user = getCurrUser();
-        if(user.isFaculty()) {
-            logger.error("Faculty cannot unenroll from a class\n");
-            throw new InvalidRequestException("Faculty cannot unenroll from a class");
-        }
-
-        Student curr = (Student) user;
-
-        if(!curr.isInClasses(classModel)) {
-            logger.error("Cannot unenroll from a class that they are not enrolled in\n");
-            throw new InvalidRequestException("Cannot unenroll from a class that they are not enrolled in");
-        }
-
-        Calendar current = Calendar.getInstance();
-        boolean openOkay = classModel.getOpenWindow().getTimeInMillis() < current.getTimeInMillis();
-        boolean closeOkay = classModel.getCloseWindow().getTimeInMillis() > current.getTimeInMillis();
-        if(openOkay && closeOkay) {
-            classModel.removeStudent(curr);
-            curr.removeClass(classModel);
-            update(user);
-            return classModel;
-        } else {
-            logger.error("Cannot unenroll from a class outside of the Registration Window\n");
-            throw new InvalidRequestException("Cannot unenroll from a class outside of the Registration Window");
-        }
-    }
-
-    /**
      * Returns a list of UserDTOs stored in db
      * @return
      */

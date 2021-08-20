@@ -29,7 +29,7 @@ public class EnrollmentServlet extends HttpServlet {
     }
 
     /**
-     * /registrar/enrollment/id?class_id=val
+     * /registrar/enrollment/user_id=val?class_id=val
      * Enroll the user with the given id into the class with the given classid
      * @param req
      * @param resp
@@ -72,7 +72,7 @@ public class EnrollmentServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(404, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } else if (!requestingUser.isAdmin()) {
+        } else if (!requestingUser.isAdmin() && (req.getParameter("id") != requestingUser.getId())) {
             String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
             logger.info(msg);
             resp.setStatus(403);
@@ -81,7 +81,6 @@ public class EnrollmentServlet extends HttpServlet {
             return;
         }
 
-        //TODO: PICK UP HERE
         String userIdParam = req.getParameter("id");
         String classIdParam = req.getParameter("class_id");
         if(requestingUser.isAdmin() || (userIdParam == requestingUser.getId())) {
@@ -109,11 +108,10 @@ public class EnrollmentServlet extends HttpServlet {
             respWriter.write(mapper.writeValueAsString(errResp));
         }
         return;
-
     }
 
     /**
-     * /registrar/enrollment/id?class_id=val
+     * /registrar/enrollment/user_id=val?class_id=val
      * Unenroll the user with the given id into the class with the given class_id
      * @param req
      * @param resp

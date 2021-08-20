@@ -45,6 +45,11 @@ public class ClassService {
         }
     }
 
+    /**
+     * Enrolls a user in a course
+     * @param user_id
+     * @param class_id
+     */
     public void enroll(String user_id, String class_id) {
         ClassModel classModel = null;
         try {
@@ -66,6 +71,47 @@ public class ClassService {
         //Need to persist these changes to the db with UPDATE
         update(classModel);
         userService.update(curr);
+    }
+
+    /**
+     * Unenrolls a user from a course
+     * classService.update(classModel) should be run afterwards to ensure the classdb is updated
+     * @param user_id
+     * @param class_id
+     */
+    public void unenroll(String user_id, String class_id) {
+        ClassModel classModel = null;
+        Student curr = null;
+        try {
+            classModel = getClassWithId(class_id);
+            curr = (Student)userService.getUserWithId(user_id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException();
+        }
+
+        if(canUnenroll(curr, classModel)) {
+            classModel.removeStudent(curr);
+            curr.removeClass(classModel);
+            update(classModel);
+            userService.update(curr);
+        }
+    }
+
+    private boolean canUnenroll(Student user, ClassModel classModel) {
+        if(!user.isInClasses(classModel)) {
+            logger.error("Cannot unenroll from a class that they are not enrolled in\n");
+            throw new InvalidRequestException("Student cannot unenroll from a class that they are not enrolled in");
+        }
+
+        Calendar current = Calendar.getInstance();
+        boolean openOkay = classModel.getOpenWindow().getTimeInMillis() < current.getTimeInMillis();
+        boolean closeOkay = classModel.getCloseWindow().getTimeInMillis() > current.getTimeInMillis();
+        if(openOkay && closeOkay) {
+            return true;
+        } else {
+            logger.error("Cannot unenroll from a class outside of the Registration Window\n");
+            throw new InvalidRequestException("Cannot unenroll from a class outside of the Registration Window");
+        }
     }
 
     /**
