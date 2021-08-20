@@ -57,6 +57,8 @@ public class UserServlet extends HttpServlet {
         // If the session is not null, then grab the auth-user attribute from it
         Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
 
+        String userIdParam = req.getParameter("id");
+
         // Check to see if there was a valid auth-user attribute
         if (requestingUser == null) {
             String msg = "No session found, please login.";
@@ -65,10 +67,10 @@ public class UserServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } if(req.getParameter("id") != null) {
+        } if(userIdParam!=null) {
             //We are doing a find specific user.
-            String userIdParam = req.getParameter("id");
             if(requestingUser.isAdmin() || (userIdParam.equals(requestingUser.getId()))) {
+
                 //Return the User
                 UserDTO user = new UserDTO(userService.getUserWithId(userIdParam));
                 respWriter.write(mapper.writeValueAsString(user));
@@ -91,8 +93,6 @@ public class UserServlet extends HttpServlet {
         }
 
         //We want to find all
-        String userIdParam = req.getParameter("id");
-
         try {
             List<UserDTO> users = userService.findAll();
             respWriter.write(mapper.writeValueAsString(users));

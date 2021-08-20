@@ -37,7 +37,7 @@ public class ContextLoaderListener implements ServletContextListener {
 
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         UserServlet userServlet = new UserServlet(userService, mapper);
-        ClassServlet classServlet = new ClassServlet(classService, mapper);
+        ClassServlet classServlet = new ClassServlet(classService, userService, mapper);
         AuthServlet authServlet = new AuthServlet(userService, mapper);
         EnrollmentServlet enrollServlet = new EnrollmentServlet(classService, mapper);
 

@@ -12,6 +12,7 @@ import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.util.MongoClientFactory;
+import com.revature.registrar.web.dtos.ClassModelDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -110,7 +111,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
      * the openDate and closeDate
      * @return
      */
-    public List<ClassModel> findOpenClasses() {
+    public List<ClassModelDTO> findOpenClasses() {
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
@@ -123,7 +124,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
                     .append("openWindow", new Document("$lt", current))
                     .append("closeWindow", new Document("$gt", current));
 
-            List<ClassModel> result = new ArrayList<>();
+            List<ClassModelDTO> result = new ArrayList<>();
             for (Document doc: usersCollection.find(query)) {
                 //Date d = new Date((long)doc.get("openWindow"));
                 //Calendar openDate = new Calendar.Builder()
@@ -138,7 +139,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
                 ClassModel classModel = mapper.readValue(doc.toJson(), ClassModel.class);
                 //classModel.setOpenWindow(openDate);
                 //classModel.setCloseWindow(closeDate);
-                result.add(classModel);
+                result.add(new ClassModelDTO(classModel));
             }
 
             if (result.size() == 0) {
