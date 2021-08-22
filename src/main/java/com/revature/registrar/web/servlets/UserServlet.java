@@ -16,11 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -122,15 +124,18 @@ public class UserServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            org.apache.commons.io.IOUtils.copy(req.getInputStream(), baos);
+
+            byte[] body = baos.toByteArray();
             //Jerry Rigged work around
-            User newUser = mapper.readValue(req.getInputStream(), User.class);
+            User newUser = mapper.readValue(body, User.class);
 
-            System.out.println(newUser.toString());
-
-            if(newUser.isFaculty())
-                newUser = new Faculty(newUser);
-            else
-                newUser = new Student(newUser);
+            if(newUser.isFaculty()) {
+                newUser = mapper.readValue(body, Faculty.class);
+            } else {
+                newUser = mapper.readValue(body, Student.class);
+            }
 
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a valid id
             String payload = mapper.writeValueAsString(principal);
@@ -209,8 +214,9 @@ public class UserServlet extends HttpServlet {
         //Delete based on entered id or current user?
 
         String userIdParam = req.getParameter("id");
+        User user = userService.getUserWithId(userIdParam);
 
-        if(userService.deleteUser())
+        if(userService.deleteUser(user))
             respWriter.write("User successfully deleted.");
         else
             respWriter.write("User was not deleted.");

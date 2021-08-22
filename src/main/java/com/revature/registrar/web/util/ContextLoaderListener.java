@@ -34,6 +34,8 @@ public class ContextLoaderListener implements ServletContextListener {
         ClassModelRepo classRepo = new ClassModelRepo();
         UserService userService = new UserService(userRepo, passwordUtils);
         ClassService classService = new ClassService(classRepo, userService);
+        userService.setClassService(classService);
+
 
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         UserServlet userServlet = new UserServlet(userService, mapper);

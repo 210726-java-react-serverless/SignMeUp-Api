@@ -45,6 +45,7 @@ public class ClassServlet extends HttpServlet {
      * /registrar/classes: Gets all classes
      * /registrar/classes/id: Get the class with the given id
      * /registrar/classes?user_id=val: Get the classes for the user with the given user_id
+     * /
      * @param req
      * @param resp
      * @throws ServletException

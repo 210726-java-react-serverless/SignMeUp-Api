@@ -210,7 +210,7 @@ public class ClassService {
         //Open has to be before the close
         if(classModel.getCloseWindow() <= classModel.getOpenWindow() ) return false;
 
-        
+
         //if a duplicate already exists in the db, reject
         if(classRepo.findById(classModel.getId()) != null) {
             logger.error("Duplicate");
