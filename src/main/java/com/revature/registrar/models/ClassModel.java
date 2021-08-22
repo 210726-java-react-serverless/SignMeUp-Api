@@ -59,6 +59,10 @@ public class ClassModel {
         return id;
     }
 
+    public void setId() {
+        this.id = String.valueOf(name.hashCode());
+    }
+
     public String getName() {
         return name;
     }

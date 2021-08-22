@@ -116,13 +116,40 @@ public class ClassServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter respWriter = resp.getWriter();
+        HttpSession session = req.getSession(false);
+        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+        if (requestingUser == null) {
+            String msg = "No session found, please login.";
+            logger.info(msg);
+            resp.setStatus(401);
+            ErrorResponse errResp = new ErrorResponse(401, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+        User reqUser = userService.getUserWithId(requestingUser.getId());
+        if(!reqUser.isFaculty()){
+            //Then requesting user is not faculty
+            String msg = "Must be faculty to create a class.";
+            logger.info(msg);
+            resp.setStatus(403);
+            ErrorResponse errResp = new ErrorResponse(403, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+        Faculty faculty = new Faculty(reqUser);
 
-        //Need to validate info in class model is correct
         ClassModel classModel = mapper.readValue(req.getInputStream(), ClassModel.class);
+
+        classModel.setId();
+
+        classModel.addFaculty(faculty);
+
 
         try {
             //Adds class to classCollection
             classService.register(classModel);
+            System.out.println("Register complete");
             //Add the class to the faculty member that created it
             ((Faculty) userService.getCurrUser()).addClass(classModel);
             //Update said faculty
@@ -135,10 +162,10 @@ public class ClassServlet extends HttpServlet {
             System.out.println("Invalid credentials");
         }
 
-        PrintWriter respWriter = resp.getWriter();
+
         //resp.setContentType("application/json");
         resp.setStatus(200);
-        respWriter.write("POST Endpoint works");
+        respWriter.write(classModel.toString());
         return;
     }
 

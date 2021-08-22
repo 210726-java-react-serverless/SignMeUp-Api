@@ -194,9 +194,15 @@ public class ClassService {
         }
 
         Calendar current = Calendar.getInstance();
+
+        if(classModel.getStudents() == null) return false;
+        if(classModel.getFaculty() == null) return false;
+
         if(classModel.getName() == null || classModel.getName().trim().equals("")) return false;
+
         if(classModel.getDescription() == null || classModel.getDescription().trim().equals("")) return false;
         if(classModel.getCapacity() <= 0) return false;
+        //Below line will cause error if no
         if(classModel.getCapacity() < classModel.getStudents().size()) return false;
         //Open/Close Windows cannot be before the current time
         if(classModel.getOpenWindow() <= 0) return false;
@@ -204,15 +210,15 @@ public class ClassService {
         //Open has to be before the close
         if(classModel.getCloseWindow() <= classModel.getOpenWindow() ) return false;
 
-        if(classModel.getStudents() == null) return false;
-        if(classModel.getFaculty() == null) return false;
-
+        
         //if a duplicate already exists in the db, reject
         if(classRepo.findById(classModel.getId()) != null) {
             logger.error("Duplicate");
             throw new ResourcePersistenceException("Duplicate");
         }
+
         if(classModel.getOpenWindow() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
+
 
         return true;
     }
