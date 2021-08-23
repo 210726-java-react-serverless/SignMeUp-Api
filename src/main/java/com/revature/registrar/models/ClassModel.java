@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.revature.registrar.web.dtos.minis.ClassModelMini;
 import org.bson.Document;
 
 import javax.print.Doc;
@@ -32,7 +33,7 @@ public class ClassModel {
     private Set<Student> students;
     private Set<Faculty> faculty; //Could have multiple faculty members per class
 
-    public ClassModel(String name, String description, int capacity, long open, long close, Set<Faculty> faculty) {
+    public ClassModel(String name, String description, int capacity, long open, long close) {
         this.name = name;
         this.description = description;
         this.id = String.valueOf(name.hashCode());
@@ -40,11 +41,29 @@ public class ClassModel {
         this.openWindow = open;
         this.closeWindow = close;
         this.students = new HashSet<>();
+        this.faculty = new HashSet<>();
+    }
+
+    public ClassModel(String name, String description, int capacity, long open, long close, Set<Faculty> faculty) {
+        this(name,description,capacity,open,close);
         this.faculty = faculty;
     }
 
     public ClassModel() {
         super();
+        this.students = new HashSet<>();
+        this.faculty = new HashSet<>();
+    }
+
+    public ClassModel(ClassModelMini CMM){
+        this.id = CMM.getId();
+        this.name = CMM.getName();
+        this.description = CMM.getDescription();
+        this.capacity = CMM.getCapacity();
+        this.openWindow = CMM.getOpenWindow();
+        this.closeWindow = CMM.getCloseWindow();
+        this.students = new HashSet<>();
+        this.faculty = new HashSet<>();
     }
 
     public int getCapacity() {
@@ -59,20 +78,33 @@ public class ClassModel {
         return id;
     }
 
-    public void setId() {
-        this.id = String.valueOf(name.hashCode());
+    public void setId(String id) {
+        if(id.equals("hash"))
+            this.id = String.valueOf(name.hashCode());
+        else
+            this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public Set<Student> getStudents() {
+        if(students==null)
+            return new HashSet<>();
         return students;
     }
 
     public Set<Document> getStudentsAsDoc() {
         Set<Document> docs = new HashSet<>();
+
+        if(students == null)
+            return docs;
+
         for(Student stu : students) {
             Document doc = stu.getAsDoc();
             docs.add(doc);
@@ -82,6 +114,10 @@ public class ClassModel {
 
     public Set<Document> getFacultyAsDoc() {
         Set<Document> docs = new HashSet<>();
+
+        if(faculty == null)
+            return docs;
+
         for(Faculty fac : faculty) {
             Document doc = fac.getAsDoc();
             docs.add(doc);
@@ -101,6 +137,8 @@ public class ClassModel {
 
 
     public Set<Faculty> getFaculty() {
+        if(faculty == null)
+            return new HashSet<>();
         return faculty;
     }
 
@@ -139,6 +177,8 @@ public class ClassModel {
     }
 
     public void addFaculty(Faculty fac) {
+        if(faculty==null)
+            faculty = new HashSet<>();
         faculty.add(fac);
     }
 
@@ -148,6 +188,24 @@ public class ClassModel {
         } else {
             //No more room in the class! Throw an exception
             throw new CapacityReachedException("Class capacity for " + this.name + " is reached");
+        }
+    }
+
+    public void setFaculty(Set<Faculty> f){
+        if(f == null)
+            return;
+        faculty = new HashSet<>();
+        for(Faculty fac: f){
+            faculty.add(fac);
+        }
+    }
+
+    public void setStudents(Set<Student> s){
+        if(s == null)
+            return;
+        students = new HashSet<>();
+        for(Student stu: s){
+            students.add(stu);
         }
     }
 
@@ -197,10 +255,8 @@ public class ClassModel {
                 ", capacity=" + capacity +
                 ", description='" + description + '\'' +
                 ", openWindow=" + openWindow +
-                ", closeWindow=" + closeWindow +
-                ", students=" + students +
-                ", faculty=" + faculty +
-                '}';
+                ", closeWindow=" + closeWindow + "}";
+//                ", students=" + students +        //TODO: fix ping pong
+//                ", faculty=" + faculty + "}";
     }
-
 }

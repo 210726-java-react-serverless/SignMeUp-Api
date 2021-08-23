@@ -15,6 +15,7 @@ import com.revature.registrar.web.dtos.ClassModelDTO;
 import com.revature.registrar.web.dtos.UserDTO;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
+import com.revature.registrar.web.dtos.minis.ClassModelMini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,35 +139,61 @@ public class ClassServlet extends HttpServlet {
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
         }
-        Faculty faculty = new Faculty(reqUser);
+
+        resp.setContentType("application/json");
+
+        Faculty facultyUser = new Faculty(reqUser);
 
         ClassModel classModel = mapper.readValue(req.getInputStream(), ClassModel.class);
 
-        classModel.setId();
+        classModel.setId("hash");
 
-        classModel.addFaculty(faculty);
+        classModel.addFaculty(facultyUser);
 
+        //TODO: Validate class isn't already in db
 
         try {
             //Adds class to classCollection
             classService.register(classModel);
-            System.out.println("Register complete");
+
+            System.out.println("After register");
             //Add the class to the faculty member that created it
-            ((Faculty) userService.getCurrUser()).addClass(classModel);
+
+            facultyUser.addClass(classModel);
+
             //Update said faculty
-            userService.update(userService.getCurrUser());
+            userService.update(facultyUser);
+            System.out.println("Updating the faculty user with class created");
+
             logger.info("New class created!\n" + classModel.toString());
 
-        } catch(Exception e) {
-            logger.error("Invalid class details");
+        } catch(InvalidRequestException ire) {
+            logger.error(ire.getStackTrace() + "\n");
+
+            String msg = "Invalid request";
+            System.out.println(msg);
+            logger.error(msg);
+            resp.setStatus(400);
+            ErrorResponse errResp = new ErrorResponse(400, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+        catch(Exception e) {
             logger.error(e.getStackTrace() + "\n");
-            System.out.println("Invalid credentials");
+
+            String msg = "Unexpected error has occurred.";
+            System.out.println(msg);
+            logger.error(msg);
+            resp.setStatus(500);
+            ErrorResponse errResp = new ErrorResponse(500, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
         }
 
 
-        //resp.setContentType("application/json");
-        resp.setStatus(200);
-        respWriter.write(classModel.toString());
+
+        resp.setStatus(201);
+        respWriter.write(mapper.writeValueAsString(classModel.toString()));
         return;
     }
 
@@ -179,11 +206,54 @@ public class ClassServlet extends HttpServlet {
      */
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getAttribute("filtered"));
         PrintWriter respWriter = resp.getWriter();
-        //resp.setContentType("application/json");
-        resp.setStatus(200);
-        respWriter.write("PUT Endpoint works");
+        HttpSession session = req.getSession(false);
+        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+        String id = req.getParameter("id").toString();
+
+        if (requestingUser == null) {
+            String msg = "No session found, please login.";
+            logger.info(msg);
+            resp.setStatus(401);
+            ErrorResponse errResp = new ErrorResponse(401, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+        User reqUser = userService.getUserWithId(requestingUser.getId());
+        if(!reqUser.isFaculty()){
+            //Then requesting user is not faculty
+            String msg = "Must be faculty to create a class.";
+            logger.info(msg);
+            resp.setStatus(403);
+            ErrorResponse errResp = new ErrorResponse(403, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+        ClassModel oldClass = classService.getClassWithId(id);
+        if(oldClass==null){
+            String msg = "Class with given ID was not found.";
+            logger.info(msg);
+            resp.setStatus(404);
+            ErrorResponse errResp = new ErrorResponse(404, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+            return;
+        }
+
+        ClassModelMini classModel = mapper.readValue(req.getInputStream(), ClassModelMini.class);
+
+        classModel.setId(id);
+        classModel.setName(oldClass.getName());
+
+        ClassModel newClass = new ClassModel(classModel);
+        newClass.setFaculty(oldClass.getFaculty());
+        newClass.setStudents(oldClass.getStudents());
+
+        //Also updates class for all registered students and faculty
+        classService.update(newClass);
+
+        resp.setContentType("application/json");
+        resp.setStatus(201);
+        respWriter.write(classModel.toString());
         return;
     }
 
@@ -223,5 +293,6 @@ public class ClassServlet extends HttpServlet {
         respWriter.write("DELETE Endpoint works");
         return;
     }
+
 
 }

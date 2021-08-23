@@ -158,6 +158,9 @@ public class ClassService {
         } catch (OpenWindowException owe) {
             logger.info("Updating existing resource");
         }
+
+        userService.updateClassForAll(classModel);
+
         return classRepo.update(classModel);
     }
 
@@ -173,6 +176,7 @@ public class ClassService {
             throw new InvalidRequestException("Invalid classModel data provided");
         }
         //pass validated user to UserRepository
+        System.out.println("In Register and Saving");
         classRepo.save(classModel);
         return classModel;
     }
@@ -194,6 +198,7 @@ public class ClassService {
         }
 
         Calendar current = Calendar.getInstance();
+        System.out.println("in isValid");
 
         if(classModel.getStudents() == null) return false;
         if(classModel.getFaculty() == null) return false;
@@ -203,22 +208,25 @@ public class ClassService {
         if(classModel.getDescription() == null || classModel.getDescription().trim().equals("")) return false;
         if(classModel.getCapacity() <= 0) return false;
         //Below line will cause error if no
+        System.out.println("Before get students in isValid");
         if(classModel.getCapacity() < classModel.getStudents().size()) return false;
+        System.out.println("After get students in isValid");
         //Open/Close Windows cannot be before the current time
         if(classModel.getOpenWindow() <= 0) return false;
         if(classModel.getCloseWindow() <= 0 || classModel.getCloseWindow() <= current.getTimeInMillis() ) return false;
         //Open has to be before the close
         if(classModel.getCloseWindow() <= classModel.getOpenWindow() ) return false;
 
-
         //if a duplicate already exists in the db, reject
         if(classRepo.findById(classModel.getId()) != null) {
+            System.out.println("Duplicate class in db");
             logger.error("Duplicate");
             throw new ResourcePersistenceException("Duplicate");
         }
 
         if(classModel.getOpenWindow() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
 
+        System.out.println("After isValid");
 
         return true;
     }

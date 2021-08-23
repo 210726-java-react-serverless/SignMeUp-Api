@@ -47,23 +47,10 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
             if (authClassDoc == null) {
                 return null;
             } else {
-                //Convert from millis to Calendar
-                //Date d = new Date((long)authClassDoc.get("openWindow"));
-                //Calendar openDate = new Calendar.Builder()
-                //        .setInstant(d)
-                //        .build();
-                //d = new Date((long)authClassDoc.get("closeWindow"));
-                //Calendar closeDate = new Calendar.Builder()
-                //        .setInstant(d)
-                //        .build();
-                //authClassDoc.remove("openWindow");
-                //authClassDoc.remove("closeWindow");
-                //authClassDoc.append("openWindow", openDate);
-                //authClassDoc.append("closeWindow", closeDate);
+
                 ObjectMapper mapper = new ObjectMapper();
                 ClassModel auth = mapper.readValue(authClassDoc.toJson(), ClassModel.class);
-                //auth.setOpenWindow(openDate);
-                //auth.setCloseWindow(closeDate);
+
                 return auth;
             }
 
@@ -80,6 +67,8 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
      */
     @Override
     public ClassModel save(ClassModel newResource) {
+        System.out.println("in Save");
+
         Document newUserDoc = new Document("name", newResource.getName())
                 .append("capacity", newResource.getCapacity())
                 .append("description", newResource.getDescription())
@@ -89,6 +78,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
                 .append("students", newResource.getStudentsAsDoc())
                 .append("faculty", newResource.getFacultyAsDoc());
 
+        System.out.println("After doc build");
 
         try {
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();

@@ -93,6 +93,23 @@ public class UserService {
         return true;
     }
 
+    public boolean updateClassForAll(ClassModel classModel) throws RuntimeException {
+        List<User> users = userRepo.findWithClass(classModel.getId());
+        for(User user : users) {
+            if (user.isFaculty()) {
+                Faculty fac = (Faculty) user;
+                fac.removeClass(classModel);
+                fac.addClass(classModel);
+            } else {
+                Student stu = (Student) user;
+                stu.removeClass(classModel);
+                stu.addClass(classModel);
+            }
+            update(user);
+        }
+        return true;
+    }
+
     /**
      * Refreshes the data of a User instance with fresh data from the database
      * @param user
