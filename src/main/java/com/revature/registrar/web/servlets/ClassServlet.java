@@ -152,9 +152,9 @@ public class ClassServlet extends HttpServlet {
             classService.register(classModel);
             System.out.println("Register complete");
             //Add the class to the faculty member that created it
-            ((Faculty) userService.getCurrUser()).addClass(classModel);
+            faculty.addClass(classModel);
             //Update said faculty
-            userService.update(userService.getCurrUser());
+            userService.update(faculty);
             logger.info("New class created!\n" + classModel.toString());
 
         } catch(Exception e) {
