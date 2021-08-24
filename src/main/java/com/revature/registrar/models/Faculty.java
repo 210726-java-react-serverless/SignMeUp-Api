@@ -2,6 +2,8 @@ package com.revature.registrar.models;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.bson.Document;
 
@@ -12,7 +14,6 @@ import org.bson.Document;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Faculty extends User{
     Set<ClassModel> classes = new HashSet<>(); //contains ids of taught classes OR should it store actual objects?
-
 
     public Faculty() {
         super();
@@ -26,9 +27,10 @@ public class Faculty extends User{
         super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), true);
     }
 
+    //Is this needed?
     public boolean isInClasses(ClassModel classModel) {
         for(ClassModel c : classes) {
-            if(c.getId() == classModel.getId()) {
+            if(c.getId().equals(classModel.getId())) {
                 return true;
             }
         }
@@ -39,6 +41,7 @@ public class Faculty extends User{
         return classes;
     }
 
+    @JsonIgnore
     public Set<Document> getClassesAsDoc() {
         Set<Document> docs = new HashSet<>();
         for(ClassModel classModel : classes) {
@@ -52,9 +55,10 @@ public class Faculty extends User{
         classes.add(c);
     }
 
+    //Duplicate method is in Student model. Can it be refactored to User?
     public void removeClass(ClassModel classModel) {
         for(ClassModel c : classes) {
-            if(c.getId() == classModel.getId()) {
+            if(c.getId().equals(classModel.getId())) {
                 classes.remove(c);
                 return;
             }

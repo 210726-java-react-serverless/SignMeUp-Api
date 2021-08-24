@@ -41,7 +41,7 @@ public class Student extends User{
 
     public boolean isInClasses(ClassModel classModel) {
         for(ClassModel c : classes) {
-            if(c.getId() == classModel.getId()) {
+            if(c.getId().equals(classModel.getId())) {
                 return true;
             }
         }
@@ -54,7 +54,7 @@ public class Student extends User{
 
     public void removeClass(ClassModel classModel) {
         for(ClassModel c : classes) {
-            if(c.getId() == classModel.getId()) {
+            if(c.getId().equals(classModel.getId())) {
                 classes.remove(c);
                 return;
             }

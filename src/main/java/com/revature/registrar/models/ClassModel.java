@@ -1,6 +1,7 @@
 package com.revature.registrar.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.revature.registrar.exceptions.CapacityReachedException;
 import com.revature.registrar.exceptions.InvalidUserTypesException;
@@ -99,6 +100,7 @@ public class ClassModel {
         return students;
     }
 
+    @JsonIgnore
     public Set<Document> getStudentsAsDoc() {
         Set<Document> docs = new HashSet<>();
 
@@ -112,6 +114,7 @@ public class ClassModel {
         return docs;
     }
 
+    @JsonIgnore
     public Set<Document> getFacultyAsDoc() {
         Set<Document> docs = new HashSet<>();
 
@@ -125,6 +128,7 @@ public class ClassModel {
         return docs;
     }
 
+    @JsonIgnore
     public Document getAsDoc() {
         Document doc = new Document("name", getName())
                 .append("id", getId())
