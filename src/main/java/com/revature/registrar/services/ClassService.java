@@ -42,7 +42,7 @@ public class ClassService {
             logger.error("Invalid ID\n");
             throw new InvalidRequestException("Invalid ID");
         } else {
-            return classRepo.findById(id);
+            return result;
         }
     }
 
@@ -153,10 +153,12 @@ public class ClassService {
                 logger.error("Invalid classModel data provided\n");
                 throw new InvalidRequestException("Invalid classModel data provided");
             }
+
         } catch (ResourcePersistenceException rpe) {
             logger.info("Updating existing resource");
         } catch (OpenWindowException owe) {
             logger.info("Updating existing resource");
+            System.out.println("Threw open window exception in update");
         }
 
         userService.updateClassForAll(classModel);
@@ -176,7 +178,6 @@ public class ClassService {
             throw new InvalidRequestException("Invalid classModel data provided");
         }
         //pass validated user to UserRepository
-        System.out.println("In Register and Saving");
         classRepo.save(classModel);
         return classModel;
     }
@@ -208,9 +209,9 @@ public class ClassService {
         if(classModel.getDescription() == null || classModel.getDescription().trim().equals("")) return false;
         if(classModel.getCapacity() <= 0) return false;
         //Below line will cause error if no
-        System.out.println("Before get students in isValid");
+
         if(classModel.getCapacity() < classModel.getStudents().size()) return false;
-        System.out.println("After get students in isValid");
+
         //Open/Close Windows cannot be before the current time
         if(classModel.getOpenWindow() <= 0) return false;
         if(classModel.getCloseWindow() <= 0 || classModel.getCloseWindow() <= current.getTimeInMillis() ) return false;
@@ -226,7 +227,6 @@ public class ClassService {
 
         if(classModel.getOpenWindow() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
 
-        System.out.println("After isValid");
 
         return true;
     }
