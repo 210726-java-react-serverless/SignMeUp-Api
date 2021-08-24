@@ -30,6 +30,10 @@ public class ClassModelMini {
         this.closeWindow = subject.getCloseWindow();
     }
 
+    public ClassModelMini(){
+        super();
+    }
+
     public String getId() {
         return id;
     }

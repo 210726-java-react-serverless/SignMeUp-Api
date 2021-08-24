@@ -87,7 +87,6 @@ public class ClassServlet extends HttpServlet {
             return;
         }
 
-
         //We want to find all
         try {
             List<ClassModelDTO> foundClasses = classService.getOpenClasses();
@@ -155,7 +154,7 @@ public class ClassServlet extends HttpServlet {
         try {
             //Adds class to classCollection
             classService.register(classModel);
-            
+
             //Add the class to the faculty member that created it
 
             facultyUser.addClass(classModel);
@@ -205,6 +204,8 @@ public class ClassServlet extends HttpServlet {
      */
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+
         PrintWriter respWriter = resp.getWriter();
         HttpSession session = req.getSession(false);
         Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
@@ -250,9 +251,8 @@ public class ClassServlet extends HttpServlet {
         //Also updates class for all registered students and faculty
         classService.update(newClass);
 
-        resp.setContentType("application/json");
         resp.setStatus(201);
-        respWriter.write(classModel.toString());
+        respWriter.write(mapper.writeValueAsString(classModel));
         return;
     }
 
@@ -266,8 +266,9 @@ public class ClassServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //receive an id from req for deleting class
+        resp.setContentType("application/json");
         PrintWriter respWriter = resp.getWriter();
-        String id = req.getParameter("id").toString();
+        String id = req.getParameter("id");
         ClassModel classModel = null;
 
         try {
@@ -284,14 +285,11 @@ public class ClassServlet extends HttpServlet {
             return;
         }
 
+        //Also deletes class from all
         classService.delete(classModel);
-        userService.deleteClassFromAll(classModel);
 
-        //resp.setContentType("application/json");
         resp.setStatus(200);
-        respWriter.write("DELETE Endpoint works");
+        respWriter.write(mapper.writeValueAsString(classModel));
         return;
     }
-
-
 }
