@@ -137,8 +137,8 @@ public class UserServlet extends HttpServlet {
             }
 
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a valid id
-            String payload = mapper.writeValueAsString(principal);
-            respWriter.write(payload);
+
+            respWriter.write(mapper.writeValueAsString(principal));
             resp.setStatus(201);
 
         } catch (InvalidRequestException | MismatchedInputException e) {

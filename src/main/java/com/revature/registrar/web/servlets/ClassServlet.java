@@ -239,12 +239,13 @@ public class ClassServlet extends HttpServlet {
             return;
         }
 
-        ClassModelMini classModel = mapper.readValue(req.getInputStream(), ClassModelMini.class);
+        //TODO: Do we want classModelmini or ClassModelDTO?
+        ClassModelMini classModelMini = mapper.readValue(req.getInputStream(), ClassModelMini.class);
 
-        classModel.setId(id);
-        classModel.setName(oldClass.getName());
+        classModelMini.setId(id);
+        classModelMini.setName(oldClass.getName());
 
-        ClassModel newClass = new ClassModel(classModel);
+        ClassModel newClass = new ClassModel(classModelMini);
         newClass.setFaculty(oldClass.getFaculty());
         newClass.setStudents(oldClass.getStudents());
 
@@ -252,7 +253,7 @@ public class ClassServlet extends HttpServlet {
         classService.update(newClass);
 
         resp.setStatus(201);
-        respWriter.write(mapper.writeValueAsString(classModel));
+        respWriter.write(mapper.writeValueAsString(classModelMini));
         return;
     }
 
@@ -288,8 +289,10 @@ public class ClassServlet extends HttpServlet {
         //Also deletes class from all
         classService.delete(classModel);
 
+        ClassModelDTO returnClass = new ClassModelDTO(classModel);
+
         resp.setStatus(200);
-        respWriter.write(mapper.writeValueAsString(classModel));
+        respWriter.write(mapper.writeValueAsString(returnClass));
         return;
     }
 }
