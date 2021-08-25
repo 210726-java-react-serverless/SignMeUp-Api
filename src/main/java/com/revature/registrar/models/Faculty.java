@@ -41,7 +41,6 @@ public class Faculty extends User{
         return classes;
     }
 
-    @JsonIgnore
     public Set<Document> getClassesAsDoc() {
         Set<Document> docs = new HashSet<>();
         for(ClassModel classModel : classes) {
