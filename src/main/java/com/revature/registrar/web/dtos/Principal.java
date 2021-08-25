@@ -1,6 +1,7 @@
 package com.revature.registrar.web.dtos;
 
 import com.revature.registrar.models.User;
+import io.jsonwebtoken.Claims;
 
 import java.util.Objects;
 
@@ -18,6 +19,12 @@ public class Principal {
         this.id = subject.getId();
         this.username = subject.getUsername();
         this.isAdmin = false;
+    }
+
+    public Principal(Claims jwtClaims){
+        this.id = jwtClaims.getId();
+        this.username = jwtClaims.getSubject();
+        this.isAdmin = jwtClaims.get("admin",Boolean.class);
     }
 
     public String getId() {

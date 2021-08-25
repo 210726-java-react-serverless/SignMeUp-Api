@@ -11,13 +11,19 @@ import com.revature.registrar.services.ClassService;
 import com.revature.registrar.util.MongoClientFactory;
 import com.revature.registrar.services.UserService;
 import com.revature.registrar.util.PasswordUtils;
+import com.revature.registrar.web.filters.AuthFilter;
 import com.revature.registrar.web.servlets.*;
+import com.revature.registrar.web.util.security.JWTConfig;
+import com.revature.registrar.web.util.security.TokenGenerator;
+
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
+import java.util.EnumSet;
 
 public class ContextLoaderListener implements ServletContextListener {
 
@@ -36,14 +42,21 @@ public class ContextLoaderListener implements ServletContextListener {
         ClassService classService = new ClassService(classRepo, userService);
         userService.setClassService(classService);
 
+        JWTConfig jwtConfig = new JWTConfig();
+        TokenGenerator tokenGenerator = new TokenGenerator(jwtConfig);
+
+        AuthFilter authFilter = new AuthFilter(jwtConfig);
+
 
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         UserServlet userServlet = new UserServlet(userService, mapper);
         ClassServlet classServlet = new ClassServlet(classService, userService, mapper);
-        AuthServlet authServlet = new AuthServlet(userService, mapper);
+        AuthServlet authServlet = new AuthServlet(userService, mapper, tokenGenerator);
         EnrollmentServlet enrollServlet = new EnrollmentServlet(classService, mapper);
 
         ServletContext servletContext = sce.getServletContext();
+
+        servletContext.addFilter("AuthFilter",authFilter).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         servletContext.addServlet("UserServlet", userServlet).addMapping("/users/*");
         servletContext.addServlet("ClassServlet", classServlet).addMapping("/classes/*");
         servletContext.addServlet("AuthServlet", authServlet).addMapping("/auth");

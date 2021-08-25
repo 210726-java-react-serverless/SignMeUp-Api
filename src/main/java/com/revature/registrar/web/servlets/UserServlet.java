@@ -54,10 +54,9 @@ public class UserServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         // Get the session from the request, if it exists (do not create one)
-        HttpSession session = req.getSession(false);
+        Principal requestingUser = (Principal) req.getAttribute("principal");
 
         // If the session is not null, then grab the auth-user attribute from it
-        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
 
         String userIdParam = req.getParameter("id");
 

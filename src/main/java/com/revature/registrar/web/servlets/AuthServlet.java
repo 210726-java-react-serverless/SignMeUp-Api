@@ -6,6 +6,7 @@ import com.revature.registrar.exceptions.AuthenticationException;
 import com.revature.registrar.web.dtos.Credentials;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
+import com.revature.registrar.web.util.security.TokenGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,10 +23,12 @@ public class AuthServlet extends HttpServlet {
     private final Logger logger = LogManager.getLogger(AuthServlet.class);
     private final UserService userService;
     private final ObjectMapper mapper;
+    private final TokenGenerator tokenGenerator;
 
-    public AuthServlet(UserService userService, ObjectMapper mapper) {
+    public AuthServlet(UserService userService, ObjectMapper mapper, TokenGenerator tokenGenerator) {
         this.userService = userService;
         this.mapper = mapper;
+        this.tokenGenerator = tokenGenerator;
     }
 
     @Override
@@ -42,8 +45,11 @@ public class AuthServlet extends HttpServlet {
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
 
-            HttpSession session = req.getSession();
-            session.setAttribute("auth-user", principal);
+            System.out.println("Before Token");
+
+            String token = tokenGenerator.createToken(principal);
+
+            resp.setHeader(tokenGenerator.getJwtConfig().getHeader(),token);
 
             logger.info("Authenticated as "+ principal.getUsername());
 
@@ -52,8 +58,9 @@ public class AuthServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, ae.getMessage());
             respWriter.write(mapper.writeValueAsString(errResp));
         }  catch (Exception e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
             resp.setStatus(500); // server's fault
+            respWriter.write(e.getMessage());
             ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later. ");
         }
 
