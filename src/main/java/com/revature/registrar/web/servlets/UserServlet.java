@@ -12,6 +12,7 @@ import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.web.dtos.UserDTO;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
+import com.revature.registrar.web.util.security.TokenGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +34,12 @@ public class UserServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(UserServlet.class);
     private final UserService userService;
     private final ObjectMapper mapper;
+    private final TokenGenerator tokenGenerator;
 
-    public UserServlet(UserService userService, ObjectMapper mapper) {
+    public UserServlet(UserService userService, ObjectMapper mapper, TokenGenerator tokenGenerator) {
         this.userService = userService;
         this.mapper = mapper;
+        this.tokenGenerator = tokenGenerator;
     }
 
     /**
@@ -137,6 +140,11 @@ public class UserServlet extends HttpServlet {
             }
 
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a valid id
+
+            String token = tokenGenerator.createToken(principal);
+            resp.setHeader(tokenGenerator.getJwtConfig().getHeader(),token);
+
+            logger.info("Authenticated as "+ principal.getUsername());
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
             resp.setStatus(201);
