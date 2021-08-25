@@ -1,5 +1,6 @@
 package com.revature.registrar.services;
 
+import com.revature.registrar.exceptions.AuthenticationException;
 import com.revature.registrar.exceptions.InvalidRequestException;
 import com.revature.registrar.exceptions.ResourceNotFoundException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
@@ -152,6 +153,8 @@ public class UserService {
 
         String encryptedPassword = passUtil.generateSecurePassword(password);
         User user = userRepo.findUserByCredentials(username, encryptedPassword);
+        if(user == null)
+            throw new AuthenticationException("Invalid user credentials");
         return user;
     }
 

@@ -36,6 +36,8 @@ public class MongoClientFactory {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             appProperties.load(loader.getResourceAsStream("application.properties"));
 
+            System.out.println(appProperties.getProperty("ipAddress"));
+
             String ipAddress = appProperties.getProperty("ipAddress");
             int port = Integer.parseInt(appProperties.getProperty("port"));
             String dbName = appProperties.getProperty("dbName"); //System.getProperty("dbName");
@@ -46,14 +48,10 @@ public class MongoClientFactory {
 
             List<ServerAddress> hosts = Collections.singletonList(new ServerAddress(ipAddress, port));
             MongoCredential credentials = MongoCredential.createScramSha1Credential(username, dbName, password);
-            //CodecRegistry defaultCodecRegistry = getDefaultCodecRegistry();
-            //PojoCodecProvider pojoCodecProvider= PojoCodecProvider.builder().automatic(true).build();
-            //CodecRegistry pojoCodecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
 
             MongoClientSettings settings = MongoClientSettings.builder()
                                                               .applyToClusterSettings(builder -> builder.hosts(hosts))
                                                               .credential(credentials)
-                                                              //.codecRegistry(pojoCodecRegistry)
                                                               .build();
 
             this.mongoClient = MongoClients.create(settings);
