@@ -100,7 +100,6 @@ public class ClassModel {
         return students;
     }
 
-    @JsonIgnore
     public Set<Document> getStudentsAsDoc() {
         Set<Document> docs = new HashSet<>();
 
@@ -114,7 +113,6 @@ public class ClassModel {
         return docs;
     }
 
-    @JsonIgnore
     public Set<Document> getFacultyAsDoc() {
         Set<Document> docs = new HashSet<>();
 
@@ -128,7 +126,6 @@ public class ClassModel {
         return docs;
     }
 
-    @JsonIgnore
     public Document getAsDoc() {
         Document doc = new Document("name", getName())
                 .append("id", getId())

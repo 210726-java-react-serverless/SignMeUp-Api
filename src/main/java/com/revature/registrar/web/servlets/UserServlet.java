@@ -140,13 +140,12 @@ public class UserServlet extends HttpServlet {
             }
 
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a valid id
-
+            
             String token = tokenGenerator.createToken(principal);
             resp.setHeader(tokenGenerator.getJwtConfig().getHeader(),token);
 
             logger.info("Authenticated as "+ principal.getUsername());
-            String payload = mapper.writeValueAsString(principal);
-            respWriter.write(payload);
+            respWriter.write(mapper.writeValueAsString(principal));
             resp.setStatus(201);
 
         } catch (InvalidRequestException | MismatchedInputException e) {

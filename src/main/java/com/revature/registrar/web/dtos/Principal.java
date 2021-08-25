@@ -10,6 +10,7 @@ public class Principal {
     private String id;
     private String username;
     private boolean isAdmin;
+    private boolean isFaculty;
 
     public Principal() {
         super();
@@ -19,12 +20,22 @@ public class Principal {
         this.id = subject.getId();
         this.username = subject.getUsername();
         this.isAdmin = false;
+        this.isFaculty = subject.isFaculty();
     }
 
     public Principal(Claims jwtClaims){
         this.id = jwtClaims.getId();
         this.username = jwtClaims.getSubject();
         this.isAdmin = jwtClaims.get("admin",Boolean.class);
+        this.isFaculty = jwtClaims.get("faculty",Boolean.class);
+    }
+
+    public boolean isFaculty() {
+        return isFaculty;
+    }
+
+    public void isFaculty(boolean faculty) {
+        this.isFaculty = faculty;
     }
 
     public String getId() {
