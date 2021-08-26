@@ -51,6 +51,7 @@ public class UserRepository implements CrudRepository<User> {
                 Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
                 fac.setFaculty(true);
                 logger.info("Retieved(F) " + fac + "\n");
+                System.out.println("*****Classes in UserRepo:" + fac.getClasses());
                 return fac;
             } else {
                 Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);

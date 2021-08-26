@@ -181,13 +181,18 @@ public class UserService {
         Faculty faculty;
         Student student;
         Set<ClassModel> classes;
+
+        System.out.println(user);
+
         if(user.isFaculty()) {
             faculty = new Faculty(user);
             classes = faculty.getClasses();
+            System.out.println(faculty+"         their classes:"+classes);
         }
         else {
             student = new Student(user);
             classes = student.getClasses();
+            System.out.println(student+"         their classes:"+classes);
         }
         return classes
                 .stream()

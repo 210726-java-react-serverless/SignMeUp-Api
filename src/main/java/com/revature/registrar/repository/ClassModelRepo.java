@@ -1,16 +1,14 @@
 package com.revature.registrar.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
-import com.mongodb.BasicDBObject;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.ClassModel;
-import com.revature.registrar.models.Faculty;
-import com.revature.registrar.models.Student;
+
 import com.revature.registrar.util.MongoClientFactory;
 import com.revature.registrar.web.dtos.ClassModelDTO;
 import org.apache.logging.log4j.LogManager;

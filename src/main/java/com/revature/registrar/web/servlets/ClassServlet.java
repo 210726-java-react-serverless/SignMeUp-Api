@@ -78,9 +78,11 @@ public class ClassServlet extends HttpServlet {
             if (userIdParam.equals(requestingUser.getId())) {
 
                 List<ClassModelDTO> classes;
+                System.out.println("In get classes of userID:"+ userIdParam);
 
                 try {
                     classes = userService.getAllClassesOfUser(userIdParam);
+                    System.out.println("Classes: "+classes);
                 } catch (ResourceNotFoundException rnfe){
                     resp.setStatus(404);
                     ErrorResponse errResp = new ErrorResponse(404, rnfe.getMessage());

@@ -28,9 +28,7 @@ public class TokenGenerator {
                                         .setExpiration(new Date(now + jwtConfig.getExpiration()))
                                         .signWith(jwtConfig.getSigAlg(), jwtConfig.getSigningKey());
 
-        System.out.println("In create Token");
-        System.out.println(jwtConfig.getPrefix());
-        System.out.println(jwtConfig.getPrefix() + tokenBuilder.compact());
+
         return jwtConfig.getPrefix() + tokenBuilder.compact();
     }
 
