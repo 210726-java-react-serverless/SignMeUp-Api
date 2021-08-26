@@ -72,7 +72,7 @@ public class EnrollmentServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(404, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } else if (!requestingUser.isAdmin() && (req.getParameter("id") != requestingUser.getId())) {
+        } else if (!requestingUser.isAdmin() && !(req.getParameter("id").equals(requestingUser.getId()))) {
             String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
             logger.info(msg);
             resp.setStatus(403);
@@ -165,7 +165,7 @@ public class EnrollmentServlet extends HttpServlet {
 
         String userIdParam = req.getParameter("id");
         String classIdParam = req.getParameter("class_id");
-        if(requestingUser.isAdmin() || (userIdParam == requestingUser.getId())) {
+        if(requestingUser.isAdmin() || (userIdParam.equals(requestingUser.getId()))) {
             //We can unenroll
             try {
                 classService.unenroll(userIdParam, classIdParam);

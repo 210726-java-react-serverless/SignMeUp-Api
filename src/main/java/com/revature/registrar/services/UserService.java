@@ -15,9 +15,7 @@ import com.revature.registrar.web.dtos.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -185,19 +183,29 @@ public class UserService {
         System.out.println(user);
 
         if(user.isFaculty()) {
-            faculty = new Faculty(user);
+            faculty = (Faculty) user;
             classes = faculty.getClasses();
-            System.out.println(faculty+"         their classes:"+classes);
         }
         else {
-            student = new Student(user);
+            student = (Student) user;
             classes = student.getClasses();
-            System.out.println(student+"         their classes:"+classes);
         }
-        return classes
-                .stream()
-                .map(ClassModelDTO::new)
-                .collect(Collectors.toList());
+
+        List<ClassModelDTO> cdto = new ArrayList<>();
+
+
+        for(ClassModel c : classes){
+            c = classService.getClassWithId(c.getId());
+            cdto.add(new ClassModelDTO(c));
+        }
+
+        System.out.println(cdto);
+        return cdto;
+
+//                classes
+//                .stream()
+//                .map(new ClassModelDTO())
+//                .collect(Collectors.toList());
     }
 
     /**

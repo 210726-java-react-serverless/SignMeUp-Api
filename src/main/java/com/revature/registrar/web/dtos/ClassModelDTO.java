@@ -38,4 +38,17 @@ public class ClassModelDTO {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ClassModelDTO{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", capacity=" + capacity +
+                ", description='" + description + '\'' +
+                ", openWindow=" + openWindow +
+                ", closeWindow=" + closeWindow +
+                ", students=" + students +
+                ", faculty=" + faculty +
+                '}';
+    }
 }

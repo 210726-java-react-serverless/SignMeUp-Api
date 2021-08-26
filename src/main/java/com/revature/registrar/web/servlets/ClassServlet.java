@@ -82,16 +82,23 @@ public class ClassServlet extends HttpServlet {
 
                 try {
                     classes = userService.getAllClassesOfUser(userIdParam);
-                    System.out.println("Classes: "+classes);
+
+                    resp.setStatus(200);
+
+                    for(ClassModelDTO c : classes)
+                        respWriter.write(mapper.writeValueAsString(c.toString()));
+
+
                 } catch (ResourceNotFoundException rnfe){
                     resp.setStatus(404);
                     ErrorResponse errResp = new ErrorResponse(404, rnfe.getMessage());
                     respWriter.write(mapper.writeValueAsString(errResp));
-                    return;
+                } catch (Exception e){
+                    resp.setStatus(500);
+                    e.printStackTrace();
+                    ErrorResponse errResp = new ErrorResponse(500, e.getMessage());
+                    respWriter.write(mapper.writeValueAsString(errResp));
                 }
-
-                resp.setStatus(200);
-                respWriter.write(mapper.writeValueAsString(classes));
 
             } else {
                 String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
