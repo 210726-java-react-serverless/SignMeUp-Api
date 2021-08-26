@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
+import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.services.ClassService;
 import com.revature.registrar.services.UserService;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 
 public class ClassServlet extends HttpServlet {
 
@@ -55,6 +57,7 @@ public class ClassServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.setContentType("application/json");
         PrintWriter respWriter = resp.getWriter();
 
         Principal requestingUser = (Principal) req.getAttribute("principal");
@@ -74,9 +77,19 @@ public class ClassServlet extends HttpServlet {
             //We are doing a find specific user.
             if (userIdParam.equals(requestingUser.getId())) {
 
-                ClassModelDTO foundClass = new ClassModelDTO(classService.getClassWithId(userIdParam));
+                List<ClassModelDTO> classes;
+
+                try {
+                    classes = userService.getAllClassesOfUser(userIdParam);
+                } catch (ResourceNotFoundException rnfe){
+                    resp.setStatus(404);
+                    ErrorResponse errResp = new ErrorResponse(404, rnfe.getMessage());
+                    respWriter.write(mapper.writeValueAsString(errResp));
+                    return;
+                }
+
                 resp.setStatus(200);
-                respWriter.write(mapper.writeValueAsString(foundClass));
+                respWriter.write(mapper.writeValueAsString(classes));
 
             } else {
                 String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
@@ -96,13 +109,15 @@ public class ClassServlet extends HttpServlet {
             resp.setStatus(404);
             ErrorResponse errResp = new ErrorResponse(404, rnfe.getMessage());
             respWriter.write(mapper.writeValueAsString(errResp));
+            return;
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500); // server's fault
             ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
             respWriter.write(mapper.writeValueAsString(errResp));
+            return;
         }
-        resp.setContentType("application/json");
+
         resp.setStatus(200);
 
         return;

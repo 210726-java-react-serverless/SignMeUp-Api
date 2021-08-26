@@ -10,12 +10,14 @@ import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.util.PasswordUtils;
+import com.revature.registrar.web.dtos.ClassModelDTO;
 import com.revature.registrar.web.dtos.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -166,6 +168,30 @@ public class UserService {
         return userRepo.findAll()
                 .stream()
                 .map(UserDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of class model DTOS for a given user
+     * @param id
+     * @return
+     */
+    public List<ClassModelDTO> getAllClassesOfUser(String id) {
+        User user = getUserWithId(id);
+        Faculty faculty;
+        Student student;
+        Set<ClassModel> classes;
+        if(user.isFaculty()) {
+            faculty = new Faculty(user);
+            classes = faculty.getClasses();
+        }
+        else {
+            student = new Student(user);
+            classes = student.getClasses();
+        }
+        return classes
+                .stream()
+                .map(ClassModelDTO::new)
                 .collect(Collectors.toList());
     }
 
