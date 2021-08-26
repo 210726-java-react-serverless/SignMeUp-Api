@@ -27,10 +27,9 @@ public class Faculty extends User{
         super(user.getFirstName(),user.getLastName(),user.getEmail(),user.getUsername(),user.getPassword(), true);
     }
 
-    //Is this needed?
-    public boolean isInClasses(ClassModel classModel) {
+    public boolean isInClasses(String id) {
         for(ClassModel c : classes) {
-            if(c.getId().equals(classModel.getId())) {
+            if(c.getId().equals(id)) {
                 return true;
             }
         }

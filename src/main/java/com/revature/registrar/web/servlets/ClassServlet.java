@@ -54,16 +54,15 @@ public class ClassServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getAttribute("filtered"));
-        PrintWriter respWriter = resp.getWriter();
-        HttpSession session = req.getSession(false);
 
-        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+        PrintWriter respWriter = resp.getWriter();
+
+        Principal requestingUser = (Principal) req.getAttribute("principal");
 
         String userIdParam = req.getParameter("id");
 
         //TODO: User needs to be logged in to view classes?
-        if(session==null){
+        if(requestingUser==null){
             String msg = "No session found, please login.";
             logger.info(msg);
             resp.setStatus(401);
@@ -73,10 +72,12 @@ public class ClassServlet extends HttpServlet {
         }
         if(userIdParam != null) {
             //We are doing a find specific user.
-            if (requestingUser.isAdmin() || (userIdParam == requestingUser.getId())) {
+            if (userIdParam.equals(requestingUser.getId())) {
 
                 ClassModelDTO foundClass = new ClassModelDTO(classService.getClassWithId(userIdParam));
+                resp.setStatus(200);
                 respWriter.write(mapper.writeValueAsString(foundClass));
+
             } else {
                 String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
                 logger.info(msg);
@@ -118,8 +119,9 @@ public class ClassServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter respWriter = resp.getWriter();
-        HttpSession session = req.getSession(false);
-        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+
+        Principal requestingUser = (Principal) req.getAttribute("principal");
+
         if (requestingUser == null) {
             String msg = "No session found, please login.";
             logger.info(msg);
@@ -149,8 +151,6 @@ public class ClassServlet extends HttpServlet {
 
         classModel.addFaculty(facultyUser);
 
-        //TODO: Validate class isn't already in db
-
         try {
             //Adds class to classCollection
             classService.register(classModel);
@@ -162,8 +162,9 @@ public class ClassServlet extends HttpServlet {
             //Update said faculty
             userService.update(facultyUser);
 
-
             logger.info("New class created!\n" + classModel.toString());
+            resp.setStatus(201);
+            respWriter.write(mapper.writeValueAsString(classModel.toString()));
 
         } catch(InvalidRequestException ire) {
             logger.error(ire.getStackTrace() + "\n");
@@ -174,7 +175,6 @@ public class ClassServlet extends HttpServlet {
             resp.setStatus(400);
             ErrorResponse errResp = new ErrorResponse(400, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
-            return;
         }
         catch(Exception e) {
             logger.error(e.getStackTrace() + "\n");
@@ -185,13 +185,8 @@ public class ClassServlet extends HttpServlet {
             resp.setStatus(500);
             ErrorResponse errResp = new ErrorResponse(500, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
-            return;
         }
 
-
-
-        resp.setStatus(201);
-        respWriter.write(mapper.writeValueAsString(classModel.toString()));
         return;
     }
 
@@ -207,9 +202,10 @@ public class ClassServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         PrintWriter respWriter = resp.getWriter();
-        HttpSession session = req.getSession(false);
-        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
-        String id = req.getParameter("id").toString();
+
+        Principal requestingUser = (Principal) req.getAttribute("principal");
+
+        String id = req.getParameter("id");
 
         if (requestingUser == null) {
             String msg = "No session found, please login.";
@@ -239,21 +235,27 @@ public class ClassServlet extends HttpServlet {
             return;
         }
 
-        //TODO: Do we want classModelmini or ClassModelDTO?
-        ClassModelMini classModelMini = mapper.readValue(req.getInputStream(), ClassModelMini.class);
+        try {
+            ClassModelMini classModelMini = mapper.readValue(req.getInputStream(), ClassModelMini.class);
 
-        classModelMini.setId(id);
-        classModelMini.setName(oldClass.getName());
+            classModelMini.setId(id);
+            classModelMini.setName(oldClass.getName());
 
-        ClassModel newClass = new ClassModel(classModelMini);
-        newClass.setFaculty(oldClass.getFaculty());
-        newClass.setStudents(oldClass.getStudents());
+            ClassModel newClass = new ClassModel(classModelMini);
+            newClass.setFaculty(oldClass.getFaculty());
+            newClass.setStudents(oldClass.getStudents());
 
-        //Also updates class for all registered students and faculty
-        classService.update(newClass);
+            //Also updates class for all registered students and faculty
+            classService.update(newClass);
 
-        resp.setStatus(201);
-        respWriter.write(mapper.writeValueAsString(classModelMini));
+            resp.setStatus(201);
+            respWriter.write(mapper.writeValueAsString(classModelMini));
+        }
+        catch(InvalidRequestException ire){
+            respWriter.write("Given class was invalid.");
+            logger.error(ire.getMessage());
+            resp.setStatus(400);
+        }
         return;
     }
 
@@ -272,27 +274,55 @@ public class ClassServlet extends HttpServlet {
         String id = req.getParameter("id");
         ClassModel classModel = null;
 
-        try {
-            classModel = classService.getClassWithId(id);
-        } catch (ResourceNotFoundException rnfe) {
-            respWriter.write("failed to retrieve class with given ID.");
-            logger.debug("class with given ID was not found in DB.",rnfe);
-            resp.setStatus(404);
-            return;
-        } catch (Exception e){
-            respWriter.write("Unexpected error has occurred.");
-            logger.error("Unexpected error has occurred.", e);
-            resp.setStatus(500);
+        Principal requestingUser = (Principal) req.getAttribute("principal");
+
+        if (requestingUser == null) {
+            String msg = "No session found, please login.";
+            logger.info(msg);
+            resp.setStatus(401);
+            ErrorResponse errResp = new ErrorResponse(401, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
             return;
         }
+        if(requestingUser.isFaculty() ){
 
-        //Also deletes class from all
-        classService.delete(classModel);
+            try {
+                Faculty requestingFac = (Faculty)userService.getUserWithId(requestingUser.getId());
+                if(!requestingFac.isInClasses(id) && !requestingUser.isAdmin()){
+                    String msg = "Class is not listed as taught by requesting faculty member. Deletion not allowed.";
+                    logger.info(msg);
+                    resp.setStatus(405);
+                    ErrorResponse errResp = new ErrorResponse(405, msg);
+                    respWriter.write(mapper.writeValueAsString(errResp));
+                    return;
+                }
+                classModel = classService.getClassWithId(id);
 
-        ClassModelDTO returnClass = new ClassModelDTO(classModel);
+                classService.delete(classModel);
 
-        resp.setStatus(200);
-        respWriter.write(mapper.writeValueAsString(returnClass));
+                ClassModelDTO returnClass = new ClassModelDTO(classModel);
+
+                resp.setStatus(200);
+                respWriter.write(mapper.writeValueAsString(returnClass));
+
+            } catch (ResourceNotFoundException rnfe) {
+                respWriter.write("Failed to retrieve resource with given ID.");
+                logger.error("Resource with given ID was not found in DB.",rnfe);
+                resp.setStatus(404);
+            } catch (Exception e) {
+                respWriter.write("Unexpected error has occurred.");
+                logger.error("Unexpected error has occurred.", e);
+                resp.setStatus(500);
+            }
+
+        } else{
+            //requesting user is not faculty
+            String msg = "Requesting user is not faculty. Deletion not allowed.";
+            respWriter.write(msg);
+            logger.info(msg);
+            resp.setStatus(405);
+        }
+
         return;
     }
 }

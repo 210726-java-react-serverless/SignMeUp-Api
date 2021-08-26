@@ -1,9 +1,6 @@
 package com.revature.registrar.services;
 
-import com.revature.registrar.exceptions.InvalidRequestException;
-import com.revature.registrar.exceptions.OpenWindowException;
-import com.revature.registrar.exceptions.ResourceNotFoundException;
-import com.revature.registrar.exceptions.ResourcePersistenceException;
+import com.revature.registrar.exceptions.*;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
@@ -138,7 +135,13 @@ public class ClassService {
      * @return
      */
     public boolean delete(ClassModel classModel) {
-        userService.deleteClassFromAll(classModel);
+        //TODO: ASK Wezley about exceptions and stack tracing on lines 138-143 & 160-164
+        try {
+            userService.deleteClassFromAll(classModel);
+        }catch(RuntimeException rte){
+            logger.error(rte.getStackTrace()+"\n");
+            throw new DataSourceException("Unexpected exception has occurred.",rte);
+        }
         return classRepo.deleteById(classModel.getId());
     }
 

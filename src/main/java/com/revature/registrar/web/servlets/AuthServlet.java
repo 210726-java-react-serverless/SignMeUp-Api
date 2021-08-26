@@ -42,10 +42,10 @@ public class AuthServlet extends HttpServlet {
 
             Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
             Principal principal = new Principal(userService.login(creds.getUsername(), creds.getPassword()));
-            String payload = mapper.writeValueAsString(principal);
-            respWriter.write(payload);
 
-            System.out.println("Before Token");
+            String payload = mapper.writeValueAsString(principal);
+
+            respWriter.write(payload);
 
             String token = tokenGenerator.createToken(principal);
 
