@@ -38,11 +38,13 @@ public class EnrollmentServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getAttribute("filtered"));
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         Principal requestingUser = (Principal) req.getAttribute("principal");
+
+        String user_id = req.getParameter("user_id");
+        String class_id = req.getParameter("class_id");
 
         // Check to see if there was a valid auth-user attribute
         if (requestingUser == null) {
@@ -52,7 +54,7 @@ public class EnrollmentServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } if(req.getParameter("user_id") == null) {
+        } if(user_id == null) {
             //What error do we throw???
             String msg = "Invalid endpoint, user_id parameter required.";
             logger.info(msg);
@@ -60,7 +62,7 @@ public class EnrollmentServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(404, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } else if (req.getParameter("class_id") == null) {
+        } else if (class_id == null) {
             //What error do we throw???
             String msg = "Invalid endpoint, class_id parameter required.";
             logger.info(msg);
@@ -68,7 +70,7 @@ public class EnrollmentServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(404, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } else if (!requestingUser.isAdmin() && !(req.getParameter("id").equals(requestingUser.getId()))) {
+        } else if (!requestingUser.isAdmin() && !(user_id.equals(requestingUser.getId()))) {
             String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
             logger.info(msg);
             resp.setStatus(403);
@@ -77,30 +79,23 @@ public class EnrollmentServlet extends HttpServlet {
             return;
         }
 
-        String userIdParam = req.getParameter("id");
-        String classIdParam = req.getParameter("class_id");
-        if(requestingUser.isAdmin() || (userIdParam == requestingUser.getId())) {
-            //We can enroll
-            try {
-                classService.enroll(userIdParam, classIdParam);
-                resp.setStatus(201);
-            } catch (ResourceNotFoundException rnfe) {
-                String msg = "Resource not found";
-                logger.info(msg);
-                resp.setStatus(404);
-                ErrorResponse errResp = new ErrorResponse(403, msg);
-                respWriter.write(mapper.writeValueAsString(errResp));
-            } catch (Exception e) {
-                e.printStackTrace();
-                resp.setStatus(500); // server's fault
-                ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
-                respWriter.write(mapper.writeValueAsString(errResp));
-            }
-        } else {
-            String msg = "Unauthorized attempt to access endpoint made by: " + requestingUser.getUsername();
+        System.out.println("HERE");
+
+        try {
+            classService.enroll(user_id, class_id);
+            resp.setStatus(201);
+            //Writeback the updated value
+            respWriter.write(mapper.writeValueAsString(classService.getClassWithId(class_id)));
+        } catch (ResourceNotFoundException rnfe) {
+            String msg = "Resource not found";
             logger.info(msg);
-            resp.setStatus(403);
+            resp.setStatus(404);
             ErrorResponse errResp = new ErrorResponse(403, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.setStatus(500); // server's fault
+            ErrorResponse errResp = new ErrorResponse(500, "The server experienced an issue, please try again later.");
             respWriter.write(mapper.writeValueAsString(errResp));
         }
         return;

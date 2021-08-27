@@ -35,6 +35,7 @@ public class ClassService {
      */
     public ClassModel getClassWithId(String id) {
         ClassModel result = classRepo.findById(id);
+        System.out.println(result);
         if(result == null) {
             logger.error("Invalid ID\n");
             throw new InvalidRequestException("Invalid ID");
@@ -50,6 +51,8 @@ public class ClassService {
      */
     public void enroll(String user_id, String class_id) {
         ClassModel classModel = null;
+        System.out.println(user_id);
+        System.out.println(class_id);
         try {
             classModel = getClassWithId(class_id);
         } catch (Exception e) {
@@ -163,7 +166,6 @@ public class ClassService {
             logger.info("Updating existing resource");
             System.out.println("Threw open window exception in update");
         }
-
         userService.updateClassForAll(classModel);
 
         return classRepo.update(classModel);

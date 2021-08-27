@@ -38,10 +38,10 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
             MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
             MongoDatabase project1db = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = project1db.getCollection("classes");
+            MongoCollection<Document> classesCollection = project1db.getCollection("classes");
             Document queryDoc = new Document("id", id);
 
-            Document authClassDoc = usersCollection.find(queryDoc).first();
+            Document authClassDoc = classesCollection.find(queryDoc).first();
 
             if (authClassDoc == null) {
                 return null;
