@@ -96,6 +96,9 @@ public class UserService {
 
     public boolean updateClassForAll(ClassModel classModel) throws RuntimeException {
         List<User> users = userRepo.findWithClass(classModel.getId());
+        if(users == null) {
+            return true;
+        }
         for(User user : users) {
             if (user.isFaculty()) {
                 Faculty fac = (Faculty) user;
