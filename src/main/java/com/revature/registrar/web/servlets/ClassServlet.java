@@ -17,6 +17,7 @@ import com.revature.registrar.web.dtos.UserDTO;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
 import com.revature.registrar.web.dtos.minis.ClassModelMini;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,16 +79,13 @@ public class ClassServlet extends HttpServlet {
             if (userIdParam.equals(requestingUser.getId())) {
 
                 List<ClassModelDTO> classes;
-                System.out.println("In get classes of userID:"+ userIdParam);
 
                 try {
                     classes = userService.getAllClassesOfUser(userIdParam);
 
                     resp.setStatus(200);
 
-                    for(ClassModelDTO c : classes)
-                        respWriter.write(mapper.writeValueAsString(c.toString()));
-
+                    respWriter.write(mapper.writeValueAsString(classes));
 
                 } catch (ResourceNotFoundException rnfe){
                     resp.setStatus(404);

@@ -188,7 +188,6 @@ public class UserRepository implements CrudRepository<User> {
             logger.error(e.getStackTrace() + "\n");
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
-
     }
 
     /**

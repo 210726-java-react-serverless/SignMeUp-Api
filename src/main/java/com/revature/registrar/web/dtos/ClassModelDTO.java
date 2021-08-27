@@ -4,6 +4,7 @@ import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
+import org.bson.Document;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -38,8 +39,72 @@ public class ClassModelDTO {
         }
     }
 
-    @Override
-    public String toString() {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public long getOpenWindow() {
+        return openWindow;
+    }
+
+    public void setOpenWindow(long openWindow) {
+        this.openWindow = openWindow;
+    }
+
+    public long getCloseWindow() {
+        return closeWindow;
+    }
+
+    public void setCloseWindow(long closeWindow) {
+        this.closeWindow = closeWindow;
+    }
+
+    public Set<UserDTO> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<UserDTO> students) {
+        this.students = students;
+    }
+
+    public Set<UserDTO> getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Set<UserDTO> faculty) {
+        this.faculty = faculty;
+    }
+
+    @java.lang.Override
+    public java.lang.String toString() {
         return "ClassModelDTO{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
@@ -51,4 +116,5 @@ public class ClassModelDTO {
                 ", faculty=" + faculty +
                 '}';
     }
+
 }
