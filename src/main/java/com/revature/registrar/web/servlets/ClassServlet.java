@@ -165,7 +165,7 @@ public class ClassServlet extends HttpServlet {
 
         resp.setContentType("application/json");
 
-        Faculty facultyUser = new Faculty(reqUser);
+        Faculty facultyUser = (Faculty) reqUser;
 
         ClassModel classModel = mapper.readValue(req.getInputStream(), ClassModel.class);
 
