@@ -42,11 +42,7 @@ public class EnrollmentServlet extends HttpServlet {
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
-        // Get the session from the request, if it exists (do not create one)
-        HttpSession session = req.getSession(false);
-
-        // If the session is not null, then grab the auth-user attribute from it
-        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+        Principal requestingUser = (Principal) req.getAttribute("principal");
 
         // Check to see if there was a valid auth-user attribute
         if (requestingUser == null) {
@@ -56,9 +52,9 @@ public class EnrollmentServlet extends HttpServlet {
             ErrorResponse errResp = new ErrorResponse(401, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
-        } if(req.getParameter("id") == null) {
+        } if(req.getParameter("user_id") == null) {
             //What error do we throw???
-            String msg = "Invalid endpoint, id parameter required.";
+            String msg = "Invalid endpoint, user_id parameter required.";
             logger.info(msg);
             resp.setStatus(404);
             ErrorResponse errResp = new ErrorResponse(404, msg);
@@ -124,11 +120,7 @@ public class EnrollmentServlet extends HttpServlet {
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
-        // Get the session from the request, if it exists (do not create one)
-        HttpSession session = req.getSession(false);
-
-        // If the session is not null, then grab the auth-user attribute from it
-        Principal requestingUser = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+        Principal requestingUser = (Principal) req.getAttribute("principal");
 
         // Check to see if there was a valid auth-user attribute
         if (requestingUser == null) {
