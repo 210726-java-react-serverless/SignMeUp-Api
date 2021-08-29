@@ -65,7 +65,7 @@ public class UserService {
     public User getUserWithId(String id) {
         User result = userRepo.findById(id);
         if(result == null) {
-            logger.error("Invalid ID\n");
+            logger.error("Invalid user ID\n");
             throw new ResourceNotFoundException();
         } else {
             return result;
@@ -79,7 +79,7 @@ public class UserService {
     public User getUserWithUsername(String username) {
         User result = userRepo.findByUsername(username);
         if(result == null) {
-            logger.error("Invalid ID\n");
+            logger.error("Invalid username\n");
             throw new ResourceNotFoundException();
         } else {
             return result;

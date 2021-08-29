@@ -196,18 +196,17 @@ public class ClassModel {
         if(f == null)
             return;
         faculty = new HashSet<>();
-        for(Faculty fac: f){
-            faculty.add(fac);
-        }
+
+        faculty.addAll(f);
+
     }
 
     public void setStudents(Set<Student> s){
         if(s == null)
             return;
         students = new HashSet<>();
-        for(Student stu: s){
-            students.add(stu);
-        }
+        students.addAll(s);
+
     }
 
     //Remove the user from the class. There must be at least 1 faculty member per class.
@@ -226,7 +225,7 @@ public class ClassModel {
     public void removeFac(Faculty fac) {
         for(Faculty f : faculty) {
             if(f.getId().equals(fac.getId())) {
-                students.remove(f);
+                faculty.remove(f);
                 return;
             }
         };
@@ -248,6 +247,16 @@ public class ClassModel {
         }
     }
 
+    public String stringWithoutUsers(){
+        return "ClassModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", capacity=" + capacity +
+                ", description='" + description + '\'' +
+                ", openWindow=" + openWindow +
+                ", closeWindow=" + closeWindow + "}";
+    }
+
     @Override
     public String toString() {
         return "ClassModel{" +
@@ -256,8 +265,8 @@ public class ClassModel {
                 ", capacity=" + capacity +
                 ", description='" + description + '\'' +
                 ", openWindow=" + openWindow +
-                ", closeWindow=" + closeWindow + "}";
-//                ", students=" + students +        //TODO: fix ping pong
-//                ", faculty=" + faculty + "}";
+                ", closeWindow=" + closeWindow + "}"+
+                ", students=" + students +
+                ", faculty=" + faculty + "}";
     }
 }
