@@ -225,7 +225,7 @@ public class ClassModel {
 
     public void removeFac(Faculty fac) {
         for(Faculty f : faculty) {
-            if(f.getId() == fac.getId()) {
+            if(f.getId().equals(fac.getId())) {
                 students.remove(f);
                 return;
             }
@@ -234,7 +234,7 @@ public class ClassModel {
 
     public void removeStudent(Student stu) {
         for(Student s : students) {
-            if(s.getId() == stu.getId()) {
+            if(s.getId().equals(stu.getId())) {
                 students.remove(s);
                 return;
             }
