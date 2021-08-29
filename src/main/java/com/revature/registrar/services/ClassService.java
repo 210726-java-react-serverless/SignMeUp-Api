@@ -167,7 +167,6 @@ public class ClassService {
             System.out.println("Threw open window exception in update");
         }
         userService.updateClassForAll(classModel);
-
         return classRepo.update(classModel);
     }
 

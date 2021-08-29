@@ -155,7 +155,6 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
 
             MongoDatabase project1db = mongoClient.getDatabase("project0");
             MongoCollection<Document> usersCollection = project1db.getCollection("classes");
-
             Bson updates = Updates.combine(
                     Updates.set("capacity", updatedResource.getCapacity()),
                     Updates.set("description", updatedResource.getDescription()),
