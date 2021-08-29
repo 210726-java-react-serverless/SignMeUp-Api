@@ -19,6 +19,7 @@ public class ClassModelMini {
     private String description;
     private long openWindow;
     private long closeWindow;
+    private String faculty = null;
 
 
     public ClassModelMini(ClassModel subject) {
@@ -28,6 +29,14 @@ public class ClassModelMini {
         this.description = subject.getDescription();
         this.openWindow = subject.getOpenWindow();
         this.closeWindow = subject.getCloseWindow();
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
     }
 
     public ClassModelMini(){

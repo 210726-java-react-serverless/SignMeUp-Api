@@ -71,6 +71,20 @@ public class UserService {
             return result;
         }
     }
+    /**
+     * Retieves the user with the given id
+     * @param username
+     * @return user
+     */
+    public User getUserWithUsername(String username) {
+        User result = userRepo.findByUsername(username);
+        if(result == null) {
+            logger.error("Invalid ID\n");
+            throw new ResourceNotFoundException();
+        } else {
+            return result;
+        }
+    }
 
     /**
      * Deletes a classModel from the classes field of all Users
@@ -202,13 +216,7 @@ public class UserService {
             cdto.add(new ClassModelDTO(c));
         }
 
-        System.out.println(cdto);
         return cdto;
-
-//                classes
-//                .stream()
-//                .map(new ClassModelDTO())
-//                .collect(Collectors.toList());
     }
 
     /**

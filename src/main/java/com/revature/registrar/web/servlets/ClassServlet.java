@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 public class ClassServlet extends HttpServlet {
@@ -257,24 +257,52 @@ public class ClassServlet extends HttpServlet {
             return;
         }
 
+        System.out.println("About to go into try{update}");
+
         try {
-            ClassModelMini classModelMini = mapper.readValue(req.getInputStream(), ClassModelMini.class);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            org.apache.commons.io.IOUtils.copy(req.getInputStream(), baos);
+
+            System.out.println(baos);
+            byte[] body = baos.toByteArray();
+
+            ClassModelMini classModelMini = mapper.readValue(body, ClassModelMini.class);
+
 
             classModelMini.setId(id);
             classModelMini.setName(oldClass.getName());
 
             ClassModel newClass = new ClassModel(classModelMini);
-            newClass.setFaculty(oldClass.getFaculty());
-            newClass.setStudents(oldClass.getStudents());
 
-            //Also updates class for all registered students and faculty
+
+            //Remove or Add a fac member
+            String facUsername = classModelMini.getFaculty();
+            if(facUsername!=null){
+                Set<Faculty> facList = oldClass.getFaculty();
+                User addOrRemoveUser = userService.getUserWithUsername(facUsername);
+
+                for(Faculty f: facList){
+                    if(f.getUsername().equals(facUsername)){
+                        facList.remove(addOrRemoveUser);
+                    }
+                }
+                if(addOrRemoveUser.isFaculty()){
+                    facList.add((Faculty)addOrRemoveUser);
+                }
+                newClass.setFaculty(facList);
+            }
+            else {
+                newClass.setFaculty(oldClass.getFaculty());
+            }
+
+            newClass.setStudents(oldClass.getStudents());
             classService.update(newClass);
 
             resp.setStatus(201);
             respWriter.write(mapper.writeValueAsString(classModelMini));
         }
         catch(InvalidRequestException ire){
-            respWriter.write("Given class was invalid.");
+            respWriter.write("Given resource was invalid.");
             logger.error(ire.getMessage());
             resp.setStatus(400);
         }

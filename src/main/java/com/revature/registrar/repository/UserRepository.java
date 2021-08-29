@@ -51,7 +51,6 @@ public class UserRepository implements CrudRepository<User> {
                 Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
                 fac.setFaculty(true);
                 logger.info("Retieved(F) " + fac + "\n");
-                System.out.println("*****Classes in UserRepo:" + fac.getClasses());
                 return fac;
             } else {
                 Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);
@@ -309,5 +308,38 @@ public class UserRepository implements CrudRepository<User> {
         }
 
         return userDocs;
+    }
+
+    /**
+     * Searches the Database and returns a User with a matching username
+     * @param username
+     * @return
+     */
+    public User findByUsername(String username) {
+        try {
+
+            Document queryDoc = new Document("username", username);
+            Document authUserDoc = usersCollection.find(queryDoc).first();
+
+            if (authUserDoc == null) {
+                return null;
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            if ((boolean)authUserDoc.get("isFaculty")) {
+                Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
+                fac.setFaculty(true);
+                logger.info("Retieved(F) " + fac + "\n");
+                return fac;
+            } else {
+                Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);
+                logger.info("Retieved(S) " + stu + "\n");
+                return stu;
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getStackTrace() + "\n");
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
     }
 }
