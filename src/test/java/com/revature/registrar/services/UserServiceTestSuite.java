@@ -1,6 +1,7 @@
 package com.revature.registrar.services;
 
 import com.revature.registrar.exceptions.InvalidRequestException;
+import com.revature.registrar.exceptions.ResourceNotFoundException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.models.User;
 import com.revature.registrar.repository.UserRepository;
@@ -81,12 +82,19 @@ public class UserServiceTestSuite {
         User validUser = new User("valid", "valid", "valid","valid","valid", false);
 
         when(mockUserRepo.save(any())).thenReturn(expected);
+        when(passwordUtils.generateSecurePassword(any())).thenReturn("valid");
 
         // Act
         User actual = sut.register(validUser);
+        System.out.println(actual);
 
         // Assert
-        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(expected.getId(), actual.getId());
+        Assert.assertEquals(expected.getFirstName(), actual.getFirstName());
+        Assert.assertEquals(expected.getLastName(), actual.getLastName());
+        Assert.assertEquals(expected.getEmail(), actual.getEmail());
+        Assert.assertEquals(expected.getPassword(), actual.getPassword());
+        Assert.assertEquals(expected.isFaculty(), actual.isFaculty());
         verify(mockUserRepo, times(1)).save(any());
     }
 
@@ -153,7 +161,7 @@ public class UserServiceTestSuite {
         verify(mockUserRepo, times(1)).findById(expected.getId());
     }
 
-    @Test (expected = InvalidRequestException.class)
+    @Test (expected = ResourceNotFoundException.class)
     public void getUserWithId_throwsInvalidRequestException_whenGivenInValidId() {
         // Arrange
         User expected = new User("valid", "valid", "valid","valid","valid", false);
@@ -195,6 +203,34 @@ public class UserServiceTestSuite {
 
         // Assert
         verify(mockUserRepo, times(0)).update(invalid);
+    }
+
+    @Test (expected = ResourceNotFoundException.class)
+    public void getUserWithUsername_throwsResourceNotFoundException_whenGivenBadUserId() {
+        // Arrange
+        String username = "test";
+        when(mockUserRepo.findByUsername(username)).thenReturn(null);
+
+        // Act
+        User actual = sut.getUserWithUsername(username);
+
+        // Assert
+        verify(mockUserRepo, times(1)).findByUsername(username);
+    }
+
+    @Test
+    public void getUserWithUsername_returnsWhenGivenValidUserId() {
+        // Arrange
+        String username = "test";
+        User valid = new User("valid", "valid", "valid","valid","valid", false);
+        when(mockUserRepo.findByUsername(username)).thenReturn(valid);
+
+        // Act
+        User actual = sut.getUserWithUsername(username);
+
+        // Assert
+        verify(mockUserRepo, times(1)).findByUsername(username);
+        Assert.assertEquals(valid, actual);
     }
 
 }

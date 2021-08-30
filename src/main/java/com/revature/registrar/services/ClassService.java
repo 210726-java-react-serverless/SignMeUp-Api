@@ -51,8 +51,6 @@ public class ClassService {
      */
     public void enroll(String user_id, String class_id) {
         ClassModel classModel = null;
-        System.out.println(user_id);
-        System.out.println(class_id);
         try {
             classModel = getClassWithId(class_id);
         } catch (Exception e) {
@@ -226,7 +224,7 @@ public class ClassService {
         //if a duplicate already exists in the db, reject
         if(classRepo.findById(classModel.getId()) != null) {
             System.out.println("Duplicate class in db");
-            logger.error("Duplicate");
+            logger.info("Duplicate");
             throw new ResourcePersistenceException("Duplicate");
         }
 
