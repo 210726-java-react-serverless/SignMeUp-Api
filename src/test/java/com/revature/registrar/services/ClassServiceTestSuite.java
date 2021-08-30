@@ -339,8 +339,8 @@ public class ClassServiceTestSuite {
         verify(mockClassRepo, times(1)).findById(invalid.getId());
     }
 
-    @Test
-    public void unenroll_returnsWhenUserNotEnrolled() {
+    @Test (expected = InvalidRequestException.class)
+    public void unenroll_throwsInvalidRequestExceptionWhenUserNotEnrolled() {
         // Arrange
         Calendar curr = Calendar.getInstance();
         Date d = new Date(curr.getTimeInMillis() - 100000);
@@ -353,8 +353,6 @@ public class ClassServiceTestSuite {
                 .build();
         ClassModel validClass = new ClassModel("valid", "valid", 2, open.getTimeInMillis(), close.getTimeInMillis());
         Student validUser = new Student("valid", "valid", "valid","valid","valid");
-        validUser.addClass(validClass);
-        validClass.addStudent(validUser);
 
         when(mockUserService.getUserWithId(validUser.getId())).thenReturn(validUser);
         when(mockClassRepo.findById(validClass.getId())).thenReturn(validClass);
@@ -366,5 +364,34 @@ public class ClassServiceTestSuite {
         verify(mockClassRepo, times(2)).findById(validUser.getId());
         verify(mockClassRepo, times(0)).update(validClass);
         verify(mockUserService, times(0)).update(validUser);
+    }
+
+    @Test
+    public void unenroll_returnsWhenUserEnrolled() {
+        // Arrange
+        Calendar curr = Calendar.getInstance();
+        Date d = new Date(curr.getTimeInMillis() - 100000);
+        Calendar open = new Calendar.Builder()
+                .setInstant(d)
+                .build();
+        d = new Date(curr.getTimeInMillis() + 100000);
+        Calendar close = new Calendar.Builder()
+                .setInstant(d)
+                .build();
+        ClassModel validClass = new ClassModel("valid", "valid", 2, open.getTimeInMillis(), close.getTimeInMillis());
+        Student validUser = new Student("valid", "valid", "valid","valid","valid");
+        validClass.addStudent(validUser);
+        validUser.addClass(validClass);
+
+        when(mockUserService.getUserWithId(validUser.getId())).thenReturn(validUser);
+        when(mockClassRepo.findById(validClass.getId())).thenReturn(validClass);
+
+        // Act
+        sut.unenroll(validUser.getId(), validClass.getId());
+
+        // Assert
+        verify(mockClassRepo, times(2)).findById(validUser.getId());
+        verify(mockClassRepo, times(1)).update(validClass);
+        verify(mockUserService, times(1)).update(validUser);
     }
 }

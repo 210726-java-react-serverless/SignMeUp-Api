@@ -197,8 +197,6 @@ public class UserService {
         Student student;
         Set<ClassModel> classes;
 
-        System.out.println(user);
-
         if(user.isFaculty()) {
             faculty = (Faculty) user;
             classes = faculty.getClasses();

@@ -10,6 +10,7 @@ import com.revature.registrar.web.dtos.ClassModelDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.SQLOutput;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
