@@ -53,7 +53,7 @@ public class AuthServlet extends HttpServlet {
 
             resp.setHeader(tokenGenerator.getJwtConfig().getHeader(),token);
 
-            logger.info("Authenticated as "+ principal.getUsername());
+            logger.info("**** Authenticated as "+ principal.getUsername() + " ****");
 
         } catch (AuthenticationException ae) {
             resp.setStatus(401); // user's fault
