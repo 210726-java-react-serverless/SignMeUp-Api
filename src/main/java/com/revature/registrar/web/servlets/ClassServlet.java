@@ -237,29 +237,19 @@ public class ClassServlet extends HttpServlet {
             respWriter.write(mapper.writeValueAsString(errResp));
             return;
         }
-        User reqUser = userService.getUserWithId(requestingUser.getId());
-        if(!reqUser.isFaculty()){
-            //Then requesting user is not faculty
-            String msg = "Must be faculty to create a class.";
-            logger.info(msg);
-            resp.setStatus(403);
-            ErrorResponse errResp = new ErrorResponse(403, msg);
-            respWriter.write(mapper.writeValueAsString(errResp));
-            return;
-        }
-        ClassModel oldClass = classService.getClassWithId(id);
-        if(oldClass==null){
-            String msg = "Class with given ID was not found.";
-            logger.info(msg);
-            resp.setStatus(404);
-            ErrorResponse errResp = new ErrorResponse(404, msg);
-            respWriter.write(mapper.writeValueAsString(errResp));
-            return;
-        }
-
-        System.out.println("About to go into try{update}");
-
         try {
+            User reqUser = userService.getUserWithId(requestingUser.getId());
+            if (!reqUser.isFaculty()) {
+                //Then requesting user is not faculty
+                String msg = "Must be faculty to create a class.";
+                logger.info(msg);
+                resp.setStatus(403);
+                ErrorResponse errResp = new ErrorResponse(403, msg);
+                respWriter.write(mapper.writeValueAsString(errResp));
+                return;
+            }
+            ClassModel oldClass = classService.getClassWithId(id);
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             org.apache.commons.io.IOUtils.copy(req.getInputStream(), baos);
 
@@ -274,25 +264,31 @@ public class ClassServlet extends HttpServlet {
 
             ClassModel newClass = new ClassModel(classModelMini);
 
+            newClass.setFaculty(oldClass.getFaculty());
 
             //Remove or Add a fac member
             String facUsername = classModelMini.getFaculty();
+
             if(facUsername!=null){
                 Set<Faculty> facList = oldClass.getFaculty();
                 User addOrRemoveUser = userService.getUserWithUsername(facUsername);
 
-                for(Faculty f: facList){
-                    if(f.getUsername().equals(facUsername)){
-                        facList.remove(addOrRemoveUser);
+
+                boolean removeUser = true;
+                for(Faculty f: facList)
+                    if(f.getUsername().equals(facUsername)) {
+                        newClass.removeFac((Faculty) addOrRemoveUser);
+                        removeUser = false;
                     }
+
+                if(removeUser && addOrRemoveUser.isFaculty()){
+                    newClass.addFaculty((Faculty)addOrRemoveUser);
                 }
-                if(addOrRemoveUser.isFaculty()){
-                    facList.add((Faculty)addOrRemoveUser);
-                }
-                newClass.setFaculty(facList);
+
             }
             else {
-                newClass.setFaculty(oldClass.getFaculty());
+                //Notify user that faculty member was not found so was not add/removed
+
             }
 
             newClass.setStudents(oldClass.getStudents());
@@ -302,11 +298,18 @@ public class ClassServlet extends HttpServlet {
             respWriter.write(mapper.writeValueAsString(classModelMini));
         }
         catch(InvalidRequestException ire){
-            respWriter.write("Given resource was invalid.");
+            String msg = "Given resource was invalid. " + ire.getMessage();
             logger.error(ire.getMessage());
+            ErrorResponse errResp = new ErrorResponse(400, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
             resp.setStatus(400);
+        }catch(ResourceNotFoundException rnfe){
+            String msg = "Resource was not found. "+rnfe.getMessage();
+            logger.error(msg);
+            resp.setStatus(404);
+            ErrorResponse errResp = new ErrorResponse(404, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
         }
-        return;
     }
 
     /**

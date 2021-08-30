@@ -66,9 +66,11 @@ public class Faculty extends User{
     @Override
     public String toString() {
         String result = super.toString();
-        result += "Faculty{" +
-                "classes=" + classes +
-                '}';
+        result += "Faculty{classes=";
+        for (ClassModel aClass : classes) {
+            result+=aClass.stringWithoutUsers();
+        }
+        result+='}';
         return result;
     }
 

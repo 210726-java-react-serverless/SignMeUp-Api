@@ -37,8 +37,8 @@ public class ClassService {
         ClassModel result = classRepo.findById(id);
         System.out.println(result);
         if(result == null) {
-            logger.error("Invalid ID\n");
-            throw new InvalidRequestException("Invalid ID");
+            logger.error("Invalid class ID\n");
+            throw new InvalidRequestException("Invalid class ID");
         } else {
             return result;
         }
@@ -136,7 +136,6 @@ public class ClassService {
      * @return
      */
     public boolean delete(ClassModel classModel) {
-        //TODO: ASK Wezley about exceptions and stack tracing on lines 138-143 & 160-164
         try {
             userService.deleteClassFromAll(classModel);
         }catch(RuntimeException rte){
