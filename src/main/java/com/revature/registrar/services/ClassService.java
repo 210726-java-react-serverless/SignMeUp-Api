@@ -7,8 +7,10 @@ import com.revature.registrar.models.User;
 import com.revature.registrar.repository.ClassModelRepo;
 import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.web.dtos.ClassModelDTO;
+import com.revature.registrar.web.servlets.AuthServlet;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLOutput;
 import java.util.Calendar;
@@ -22,7 +24,7 @@ import java.util.List;
 public class ClassService {
     private final ClassModelRepo classRepo;
     private final UserService userService;
-    private final Logger logger = LogManager.getLogger(ClassService.class);
+    private final Logger logger = LoggerFactory.getLogger(ClassService.class);
 
     public ClassService(ClassModelRepo classRepo, UserService userService) {
         this.classRepo = classRepo;

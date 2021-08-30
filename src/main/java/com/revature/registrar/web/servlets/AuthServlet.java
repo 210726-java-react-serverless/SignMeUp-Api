@@ -7,8 +7,8 @@ import com.revature.registrar.web.dtos.Credentials;
 import com.revature.registrar.web.dtos.ErrorResponse;
 import com.revature.registrar.web.dtos.Principal;
 import com.revature.registrar.web.util.security.TokenGenerator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +20,7 @@ import java.io.PrintWriter;
 
 public class AuthServlet extends HttpServlet {
 
-    private final Logger logger = LogManager.getLogger(AuthServlet.class);
+    private final Logger logger = LoggerFactory.getLogger(AuthServlet.class);
     private final UserService userService;
     private final ObjectMapper mapper;
     private final TokenGenerator tokenGenerator;

@@ -11,10 +11,12 @@ import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.util.MongoClientFactory;
+import com.revature.registrar.web.servlets.AuthServlet;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -22,7 +24,7 @@ import java.util.*;
  * Provides methods to communicate and interact with the MongoDB users collection
  */
 public class UserRepository implements CrudRepository<User> {
-    private final Logger logger = LogManager.getLogger(UserRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
     private MongoCollection<Document> usersCollection;
 
     public UserRepository() {

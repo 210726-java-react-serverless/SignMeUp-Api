@@ -12,10 +12,12 @@ import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.util.MongoClientFactory;
 import com.revature.registrar.web.dtos.ClassModelDTO;
+import com.revature.registrar.web.servlets.AuthServlet;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.print.Doc;
 import java.util.*;
@@ -24,7 +26,7 @@ import java.util.*;
  * Provides methods to communicate and interact with the MongoDB classes collection
  */
 public class ClassModelRepo implements CrudRepository<ClassModel>{
-    private final Logger logger = LogManager.getLogger(ClassModelRepo.class);
+    private final Logger logger = LoggerFactory.getLogger(ClassModelRepo.class);
 
 
     /**
@@ -168,7 +170,7 @@ public class ClassModelRepo implements CrudRepository<ClassModel>{
             return true;
 
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error(e.getStackTrace().toString());
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
     }
