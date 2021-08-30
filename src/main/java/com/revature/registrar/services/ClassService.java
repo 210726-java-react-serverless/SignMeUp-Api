@@ -203,7 +203,6 @@ public class ClassService {
         }
 
         Calendar current = Calendar.getInstance();
-        System.out.println("in isValid");
 
         if(classModel.getStudents() == null) return false;
         if(classModel.getFaculty() == null) return false;
@@ -229,8 +228,8 @@ public class ClassService {
             throw new ResourcePersistenceException("Duplicate");
         }
 
-        if(classModel.getOpenWindow() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
 
+        if(classModel.getOpenWindow() <= current.getTimeInMillis()) throw new OpenWindowException("Window is open");
 
         return true;
     }

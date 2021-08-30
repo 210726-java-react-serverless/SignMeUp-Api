@@ -2,16 +2,13 @@ package com.revature.registrar.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.revature.registrar.exceptions.DataSourceException;
+import com.revature.registrar.exceptions.*;
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.services.ClassService;
 import com.revature.registrar.services.UserService;
-import com.revature.registrar.exceptions.InvalidRequestException;
-import com.revature.registrar.exceptions.ResourceNotFoundException;
-import com.revature.registrar.exceptions.ResourcePersistenceException;
 import com.revature.registrar.web.dtos.ClassModelDTO;
 import com.revature.registrar.web.dtos.UserDTO;
 import com.revature.registrar.web.dtos.ErrorResponse;
@@ -166,8 +163,10 @@ public class ClassServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         Faculty facultyUser = (Faculty) reqUser;
-
+        
         ClassModel classModel = mapper.readValue(req.getInputStream(), ClassModel.class);
+
+        System.out.println(classModel);
 
         classModel.setId("hash");
 
@@ -184,6 +183,7 @@ public class ClassServlet extends HttpServlet {
             //Update said faculty
             userService.update(facultyUser);
 
+
             logger.info("New class created!\n" + classModel.toString());
             resp.setStatus(201);
             respWriter.write(mapper.writeValueAsString(classModel.toString()));
@@ -197,12 +197,19 @@ public class ClassServlet extends HttpServlet {
             resp.setStatus(400);
             ErrorResponse errResp = new ErrorResponse(400, msg);
             respWriter.write(mapper.writeValueAsString(errResp));
+        } catch(OpenWindowException owe){
+            logger.error(owe.getStackTrace() + "\n");
+
+            String msg = "Open window error! Opening date needs to be in the future";
+            logger.error(msg);
+            resp.setStatus(400);
+            ErrorResponse errResp = new ErrorResponse(400, msg);
+            respWriter.write(mapper.writeValueAsString(errResp));
         }
         catch(Exception e) {
             logger.error(e.getStackTrace() + "\n");
 
             String msg = "Unexpected error has occurred.";
-            System.out.println(msg);
             logger.error(msg);
             resp.setStatus(500);
             ErrorResponse errResp = new ErrorResponse(500, msg);
@@ -250,14 +257,7 @@ public class ClassServlet extends HttpServlet {
             }
             ClassModel oldClass = classService.getClassWithId(id);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            org.apache.commons.io.IOUtils.copy(req.getInputStream(), baos);
-
-            System.out.println(baos);
-            byte[] body = baos.toByteArray();
-
-            ClassModelMini classModelMini = mapper.readValue(body, ClassModelMini.class);
-
+            ClassModelMini classModelMini = mapper.readValue(req.getInputStream(), ClassModelMini.class);
 
             classModelMini.setId(id);
             classModelMini.setName(oldClass.getName());
@@ -375,7 +375,5 @@ public class ClassServlet extends HttpServlet {
             logger.info(msg);
             resp.setStatus(405);
         }
-
-        return;
     }
 }
