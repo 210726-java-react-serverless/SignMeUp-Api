@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class EnrollmentServlet extends HttpServlet {
-    private final Logger logger = LoggerFactory.getLogger(UserServlet.class);
+    private final Logger logger = LoggerFactory.getLogger(EnrollmentServlet.class);
     private final ClassService classService;
     private final ObjectMapper mapper;
 

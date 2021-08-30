@@ -7,9 +7,12 @@ import com.revature.registrar.models.User;
 import com.revature.registrar.repository.ClassModelRepo;
 import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.web.dtos.ClassModelDTO;
+import com.revature.registrar.web.servlets.AuthServlet;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.SQLOutput;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +24,7 @@ import java.util.List;
 public class ClassService {
     private final ClassModelRepo classRepo;
     private final UserService userService;
-    private final Logger logger = LogManager.getLogger(ClassService.class);
+    private final Logger logger = LoggerFactory.getLogger(ClassService.class);
 
     public ClassService(ClassModelRepo classRepo, UserService userService) {
         this.classRepo = classRepo;
@@ -51,8 +54,6 @@ public class ClassService {
      */
     public void enroll(String user_id, String class_id) {
         ClassModel classModel = null;
-        System.out.println(user_id);
-        System.out.println(class_id);
         try {
             classModel = getClassWithId(class_id);
         } catch (Exception e) {
@@ -224,7 +225,7 @@ public class ClassService {
         //if a duplicate already exists in the db, reject
         if(classRepo.findById(classModel.getId()) != null) {
             System.out.println("Duplicate class in db");
-            logger.error("Duplicate");
+            logger.info("Duplicate");
             throw new ResourcePersistenceException("Duplicate");
         }
 

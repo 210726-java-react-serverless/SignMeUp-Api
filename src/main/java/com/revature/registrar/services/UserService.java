@@ -12,8 +12,10 @@ import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.util.PasswordUtils;
 import com.revature.registrar.web.dtos.ClassModelDTO;
 import com.revature.registrar.web.dtos.UserDTO;
+import com.revature.registrar.web.servlets.AuthServlet;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepo;
     private ClassService classService;
-    private final Logger logger = LogManager.getLogger(UserService.class);
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final PasswordUtils passUtil;
 
@@ -196,8 +198,6 @@ public class UserService {
         Faculty faculty;
         Student student;
         Set<ClassModel> classes;
-
-        System.out.println(user);
 
         if(user.isFaculty()) {
             faculty = (Faculty) user;

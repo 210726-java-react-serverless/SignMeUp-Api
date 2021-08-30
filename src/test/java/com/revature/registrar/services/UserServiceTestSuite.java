@@ -1,12 +1,21 @@
 package com.revature.registrar.services;
 
 import com.revature.registrar.exceptions.InvalidRequestException;
+import com.revature.registrar.exceptions.ResourceNotFoundException;
 import com.revature.registrar.exceptions.ResourcePersistenceException;
+import com.revature.registrar.models.ClassModel;
+import com.revature.registrar.models.Faculty;
+import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.util.PasswordUtils;
 import org.junit.*;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -81,12 +90,19 @@ public class UserServiceTestSuite {
         User validUser = new User("valid", "valid", "valid","valid","valid", false);
 
         when(mockUserRepo.save(any())).thenReturn(expected);
+        when(passwordUtils.generateSecurePassword(any())).thenReturn("valid");
 
         // Act
         User actual = sut.register(validUser);
+        System.out.println(actual);
 
         // Assert
-        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(expected.getId(), actual.getId());
+        Assert.assertEquals(expected.getFirstName(), actual.getFirstName());
+        Assert.assertEquals(expected.getLastName(), actual.getLastName());
+        Assert.assertEquals(expected.getEmail(), actual.getEmail());
+        Assert.assertEquals(expected.getPassword(), actual.getPassword());
+        Assert.assertEquals(expected.isFaculty(), actual.isFaculty());
         verify(mockUserRepo, times(1)).save(any());
     }
 
@@ -153,7 +169,7 @@ public class UserServiceTestSuite {
         verify(mockUserRepo, times(1)).findById(expected.getId());
     }
 
-    @Test (expected = InvalidRequestException.class)
+    @Test (expected = ResourceNotFoundException.class)
     public void getUserWithId_throwsInvalidRequestException_whenGivenInValidId() {
         // Arrange
         User expected = new User("valid", "valid", "valid","valid","valid", false);
@@ -195,6 +211,130 @@ public class UserServiceTestSuite {
 
         // Assert
         verify(mockUserRepo, times(0)).update(invalid);
+    }
+
+    @Test (expected = ResourceNotFoundException.class)
+    public void getUserWithUsername_throwsResourceNotFoundException_whenGivenBadUserId() {
+        // Arrange
+        String username = "test";
+        when(mockUserRepo.findByUsername(username)).thenReturn(null);
+
+        // Act
+        User actual = sut.getUserWithUsername(username);
+
+        // Assert
+        verify(mockUserRepo, times(1)).findByUsername(username);
+    }
+
+    @Test
+    public void getUserWithUsername_returnsWhenGivenValidUserId() {
+        // Arrange
+        String username = "test";
+        User valid = new User("valid", "valid", "valid","valid","valid", false);
+        when(mockUserRepo.findByUsername(username)).thenReturn(valid);
+
+        // Act
+        User actual = sut.getUserWithUsername(username);
+
+        // Assert
+        verify(mockUserRepo, times(1)).findByUsername(username);
+        Assert.assertEquals(valid, actual);
+    }
+
+    @Test
+    public void deleteClassFromAll_returnsWhenGivenClass() {
+        // Arrange
+        Calendar curr = Calendar.getInstance();
+        Date d = new Date(curr.getTimeInMillis() - 100000);
+        Calendar open = new Calendar.Builder()
+                .setInstant(d)
+                .build();
+        d = new Date(curr.getTimeInMillis() + 100000);
+        Calendar close = new Calendar.Builder()
+                .setInstant(d)
+                .build();
+        ClassModel validClass = new ClassModel("valid", "valid", 5, open.getTimeInMillis(), close.getTimeInMillis());
+
+        Student valid1 = new Student("valid", "valid", "valid","valid","valid");
+        Student valid2 = new Student("valid2", "valid2", "valid2","valid2","valid2");
+        Student valid3 = new Student("valid3", "valid3", "valid3","valid3","valid3");
+
+        Faculty fac = new Faculty("valid3", "valid3", "valid3","valid3","valid3");
+
+        valid1.addClass(validClass);
+        valid2.addClass(validClass);
+        valid3.addClass(validClass);
+        fac.addClass(validClass);
+        validClass.addStudent(valid1);
+        validClass.addStudent(valid2);
+        validClass.addStudent(valid3);
+        validClass.addFaculty(fac);
+
+        List<User> list = new ArrayList<>();
+        list.add(valid1);
+        list.add(valid2);
+        list.add(valid3);
+        list.add(fac);
+
+        boolean expected = true;
+        when(mockUserRepo.findWithClass(validClass.getId())).thenReturn(list);
+
+        // Act
+        boolean actual = sut.deleteClassFromAll(validClass);
+
+        // Assert
+        verify(mockUserRepo, times(1)).findWithClass(validClass.getId());
+        verify(mockUserRepo, times(4)).update(any());
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void updateClassForAll_returnsWhenGivenClass() {
+        // Arrange
+        Calendar curr = Calendar.getInstance();
+        Date d = new Date(curr.getTimeInMillis() - 100000);
+        Calendar open = new Calendar.Builder()
+                .setInstant(d)
+                .build();
+        d = new Date(curr.getTimeInMillis() + 100000);
+        Calendar close = new Calendar.Builder()
+                .setInstant(d)
+                .build();
+        ClassModel validClass = new ClassModel("valid", "valid", 5, open.getTimeInMillis(), close.getTimeInMillis());
+
+        Student valid1 = new Student("valid", "valid", "valid","valid","valid");
+        Student valid2 = new Student("valid2", "valid2", "valid2","valid2","valid2");
+        Student valid3 = new Student("valid3", "valid3", "valid3","valid3","valid3");
+
+        Faculty fac = new Faculty("valid3", "valid3", "valid3","valid3","valid3");
+
+        valid1.addClass(validClass);
+        valid2.addClass(validClass);
+        valid3.addClass(validClass);
+        fac.addClass(validClass);
+        validClass.addStudent(valid1);
+        validClass.addStudent(valid2);
+        validClass.addStudent(valid3);
+        validClass.addFaculty(fac);
+
+        List<User> list = new ArrayList<>();
+        list.add(valid1);
+        list.add(valid2);
+        list.add(valid3);
+        list.add(fac);
+
+        boolean expected = true;
+        when(mockUserRepo.findWithClass(validClass.getId())).thenReturn(list);
+
+        // Act
+        boolean actual = sut.updateClassForAll(validClass);
+
+        // Assert
+        verify(mockUserRepo, times(1)).findWithClass(validClass.getId());
+        verify(mockUserRepo, times(4)).update(any());
+
+        Assert.assertEquals(expected, actual);
     }
 
 }

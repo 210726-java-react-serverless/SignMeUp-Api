@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class ClassServlet extends HttpServlet {
 
-    private final Logger logger = LoggerFactory.getLogger(UserServlet.class);
+    private final Logger logger = LoggerFactory.getLogger(ClassServlet.class);
     private final ClassService classService;
     private final UserService userService;
     private final ObjectMapper mapper;
