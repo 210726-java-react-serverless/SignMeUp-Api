@@ -5,14 +5,14 @@ SignMeUp is a course registration application that allows for users to easily vi
 
 <h2>Technologies Used</h2>
 
-    Jackson
-    JavaxServlet
-    Junit
-    jsonwebtoken
-    MongoDB Driver
-    Mockito
-    SLF4J
-    Logback
+Jackson
+JavaxServlet
+Junit
+jsonwebtoken
+MongoDB Driver
+Mockito
+SLF4J
+Logback
 
 <h2>Features</h2>
 Provides endpoints that expose CRUD operations on Users and Classes. Users can create an account as either a Student or Faculty member. Faculty members can create classes and update/delete those classes. Students can view all open classes and enroll/unenroll in a class. 
