@@ -11,3 +11,6 @@ Provides endpoints that expose CRUD operations on Users and Classes. Users can c
 
 <h2>TODOs</h2>
 Create a system that allows users to request Faculty status and be accepted by an Admin user. Allowing users to just sign up as Faculty directly is not secure.
+
+<h2>UI Repository</h2>
+https://github.com/RaneyJ/SignMeUp-UI.git
